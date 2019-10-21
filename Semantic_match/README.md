@@ -1,14 +1,14 @@
-# 语义匹配模型的实现，要点如下：
+## 语义匹配模型的实现，要点如下：
 * 采用dssm模型
 * 在句子的语义表达上分别采用TextCNN
 * 分别实现共享网络和不共享网络两种
 
-# 数据集信息：
+## 数据集信息：
 原则上只要标注label的pair sentence数据集均可进行；本实的语料来自于： https://www.kaggle.com/c/quora-question-pairs/data   
 
 只使用了train.csv的部分。
 
-# 在实践中可优化的地方：
+## 在实践中可优化的地方：
 1）fine train，本实例均采用了word2vec的fine train，好处是：
 * 提高模型的收敛速度；
 * 增强训练的稳定性，降低波动；
