@@ -108,6 +108,7 @@ def dssm(questionA,questionB,labels,n_symbols,embed_weights):
     my_inputA,denseA = get_model(n_symbols,embed_weights)
     my_inputB,denseB = get_model(n_symbols,embed_weights)
     output = Dot(axes = 1,normalize=True)([denseA,denseB])
+    output = Dense(units=1,activation='hard_sigmoid')
     dssm_model = Model(inputs=[my_inputA,my_inputB],output=output)
     dssm_model.compile(optimizer='rmsprop', loss='binary_crossentropy',
               metrics=[auc])
