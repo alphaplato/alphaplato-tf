@@ -27,7 +27,7 @@ cup_count=multiprocessing.cpu_count()
 vocab_dim = 128
 window_size = 4
 min_count = 5
-n_iteration = 1
+n_iteration = 4
 
 max_len =100
 batch_size = 64
@@ -109,7 +109,8 @@ def dssm(questionA,questionB,labels,n_symbols,embed_weights):
     outputA = model(inputs=inputA)
     outputB = model(inputs=inputB)
     output = Dot(axes=1,normalize=True)([outputA,outputB])
-    output = Dense(units=1,activation='hard_sigmod')
+    print(output)
+    output = Dense(units=1,activation='hard_sigmoid')(output)
     dssm_model = Model(inputs=[inputA,inputB],output=output)
     dssm_model.compile(optimizer='rmsprop', loss='binary_crossentropy',
               metrics=[auc])
@@ -119,7 +120,7 @@ def dssm(questionA,questionB,labels,n_symbols,embed_weights):
     dssm_model.save('model/dssm_model.h5')
 
 logger.setLevel(log_level)
-questionA,questionB,labels = load_data('data/train.csv_1') 
+questionA,questionB,labels = load_data('data/train.csv') 
 embed_weights,w2index,n_symbols = word2vec(questionA+questionB)
 questionA,questionB = input_data(w2index,questionA,questionB)
 dssm(questionA,questionB,labels,n_symbols,embed_weights)
