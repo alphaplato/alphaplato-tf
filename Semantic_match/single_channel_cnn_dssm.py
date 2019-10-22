@@ -125,7 +125,7 @@ def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
     dssm_model.fit([questionA,questionB],labels, batch_size=batch_size)
 
 logger.setLevel(log_level)
-X_train,X_test,Y_train,Y_test = load_data('data/train.csv_1') 
+X_train,X_test,Y_train,Y_test = load_data('data/train.csv') 
 common_texts = X_train.question1.tolist() + X_train.question2.tolist()
 embed_weights,w2index,n_symbols = word2vec(common_texts)
 dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights)
