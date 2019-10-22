@@ -2,9 +2,7 @@
 * 采用LSTM、TextCNN模型
 
 ## 数据集信息：
-原则上只要标注label的pair sentence数据集均可进行；本实的语料来自于： https://www.kaggle.com/c/quora-question-pairs/data   
-
-只使用了train.csv的部分。
+原则上只要标注情感分类数据集均可进行；本实的语料来自于：https://www.kaggle.com/oumaimahourrane/imdb-reviews
 
 ## 在实践中可优化的地方：
 1）fine train，本实例均采用了word2vec的fine train，好处是：
