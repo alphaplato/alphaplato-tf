@@ -7,7 +7,7 @@ from gensim.corpora.dictionary import Dictionary
 from keras.preprocessing import sequence
 from keras.models import Model
 from keras.layers.embeddings import Embedding
-from keras.layers import Input,Conv1D,MaxPooling1D,Dense,Dot,Flatten
+from keras.layers import Input,LSTM,Dense,Dot,Flatten
 from sklearn.model_selection import train_test_split
 
 import nltk
@@ -94,10 +94,8 @@ def get_model(n_symbols,embed_weights):
         input_dim=n_symbols,
         weights=[embed_weights],
         input_length=max_len)(my_input)
-    convontion = Conv1D(256,3,activation='relu',padding='same')(sent)
-    maxpooling = MaxPooling1D(max_len,padding='same')(convontion)
-    dense = Dense(units=128, activation='relu')(maxpooling)
-    output = Flatten()(dense)
+    lstm = LSTM(units=256, return_sequences=True)(sent)
+    output = LSTM(units=128)(lstm)
     return my_input,output
 
 def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
@@ -121,7 +119,7 @@ def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
     dssm_model.fit([questionA,questionB],labels, batch_size=batch_size)
 
 logger.setLevel(log_level)
-X_train,X_test,Y_train,Y_test = load_data('data/train.csv') 
+X_train,X_test,Y_train,Y_test = load_data('data/train.csv_1') 
 common_texts = X_train.question1.tolist() + X_train.question2.tolist()
 embed_weights,w2index,n_symbols = word2vec(common_texts)
 dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights)

@@ -7,7 +7,7 @@ from gensim.corpora.dictionary import Dictionary
 from keras.preprocessing import sequence
 from keras.models import Model
 from keras.layers.embeddings import Embedding
-from keras.layers import Input,Conv1D,MaxPooling1D,Dense,Dot,Flatten
+from keras.layers import Input,LSTM,Dense,Dot,Flatten
 from sklearn.model_selection import train_test_split
 
 import nltk
@@ -89,23 +89,25 @@ def word2vec(common_texts):
 
 
 def get_model(n_symbols,embed_weights):  
-    my_input = Input(shape=(max_len,),dtype='int32')  # input sequence
+    my_input = Input(shape=(max_len,),dtype='int32') # input sequence
     sent = Embedding(output_dim=vocab_dim,
         input_dim=n_symbols,
         weights=[embed_weights],
         input_length=max_len)(my_input)
-    convontion = Conv1D(256,3,activation='relu',padding='same')(sent)
-    maxpooling = MaxPooling1D(max_len,padding='same')(convontion)
-    dense = Dense(units=128, activation='relu')(maxpooling)
-    output = Flatten()(dense)
-    return my_input,output
+    lstm = LSTM(units=256,return_sequences=True)(sent)
+    output = LSTM(units=128)(lstm)
+    model = Model(my_input,output)
+    return model
 
 def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
-    my_inputA,outputA = get_model(n_symbols,embed_weights)
-    my_inputB,outputB = get_model(n_symbols,embed_weights)
-    output = Dot(axes = 1,normalize=True)([outputA,outputB])
+    model = get_model(n_symbols,embed_weights)
+    inputA = Input(shape=(max_len,),dtype='int32')
+    inputB = Input(shape=(max_len,),dtype='int32')
+    outputA = model(inputs=inputA)
+    outputB = model(inputs=inputB)
+    output = Dot(axes=1,normalize=True)([outputA,outputB])
     output = Dense(units=1,activation='hard_sigmoid')(output)
-    dssm_model = Model(inputs=[my_inputA,my_inputB],output=output)
+    dssm_model = Model(inputs=[inputA,inputB],output=output)
     dssm_model.compile(optimizer='rmsprop', loss='binary_crossentropy',
               metrics=[auc])
     logging.info("DSSM train...")

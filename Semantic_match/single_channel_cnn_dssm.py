@@ -7,7 +7,7 @@ from gensim.corpora.dictionary import Dictionary
 from keras.preprocessing import sequence
 from keras.models import Model
 from keras.layers.embeddings import Embedding
-from keras.layers import Input,Conv1D,MaxPooling1D,Dense,Dot,Reshape,Flatten
+from keras.layers import Input,Conv1D,MaxPooling1D,Dense,Dot,Flatten
 from sklearn.model_selection import train_test_split
 
 import nltk
