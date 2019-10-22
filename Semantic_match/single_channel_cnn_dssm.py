@@ -45,12 +45,12 @@ def auc(y_true, y_pred):
     return auc
 
 def load_data(data):
-    dataset = pd.read_csv(data).dropna()
     logger.info("loading and tokenize...")
-    questionA = list(map(nltk.word_tokenize,dataset.question1.tolist()))
-    questionB = list(map(nltk.word_tokenize,dataset.question2.tolist()))
-    labels = list(map(int,dataset.is_duplicate.tolist()))
-    return questionA,questionB,labels
+    dataset = pd.read_csv(data).dropna()
+    data = dataset[['question1','question2']].applymap(nltk.word_tokenize)
+    label = dataset['is_duplicate'].apply(int).tolist()
+    X_train,X_test,Y_train,Y_test = train_test_split(data,label,test_size=0.1, random_state=0)
+    return X_train,X_test,Y_train,Y_test
 
 def get_params(model):
     gensim_dict = Dictionary()
@@ -64,7 +64,7 @@ def get_params(model):
     print("the total words,n_symbols:{0}".format(n_symbols))
     return embed_weights,w2index,n_symbols
 
-def input_data(w2index,questionA,questionB):
+def input_data(w2index,dataset):
     def func(sent):
         sent_sequence = []
         for w in sent:
@@ -73,10 +73,9 @@ def input_data(w2index,questionA,questionB):
             else:
                 sent_sequence.append(0)
         return sent_sequence
-    questionA = sequence.pad_sequences(list(map(func, questionA)),maxlen=max_len)
-    questionB = sequence.pad_sequences(list(map(func, questionB)),maxlen=max_len)
-    return questionA,questionB
-        
+    questionA = sequence.pad_sequences(list(map(func, dataset.question1.tolist())),maxlen=max_len)
+    questionB = sequence.pad_sequences(list(map(func, dataset.question2)),maxlen=max_len)
+    return questionA,questionB        
 
 def word2vec(common_texts):
     model = Word2Vec(size=vocab_dim, window=window_size, min_count=min_count, workers=cup_count, iter=n_iteration)
@@ -102,25 +101,31 @@ def get_model(n_symbols,embed_weights):
     model = Model(my_input,output)
     return model
 
-def dssm(questionA,questionB,labels,n_symbols,embed_weights):
+def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
     model = get_model(n_symbols,embed_weights)
     inputA = Input(shape=(max_len,),dtype='int32')
     inputB = Input(shape=(max_len,),dtype='int32')
     outputA = model(inputs=inputA)
     outputB = model(inputs=inputB)
     output = Dot(axes=1,normalize=True)([outputA,outputB])
-    print(output)
     output = Dense(units=1,activation='hard_sigmoid')(output)
     dssm_model = Model(inputs=[inputA,inputB],output=output)
     dssm_model.compile(optimizer='rmsprop', loss='binary_crossentropy',
               metrics=[auc])
     logging.info("DSSM train...")
+    questionA,questionB = input_data(w2index,X_train)
+    labels = Y_train
     dssm_model.fit([questionA,questionB],labels, batch_size=batch_size, epochs=n_epoch,verbose=1)
     logging.info("DSSM save...")
     dssm_model.save('model/dssm_model.h5')
 
+    logging.info("DSSM evaluate...")
+    questionA,questionB = input_data(w2index,X_test)
+    labels = Y_test 
+    dssm_model.fit([questionA,questionB],labels, batch_size=batch_size)
+
 logger.setLevel(log_level)
-questionA,questionB,labels = load_data('data/train.csv') 
-embed_weights,w2index,n_symbols = word2vec(questionA+questionB)
-questionA,questionB = input_data(w2index,questionA,questionB)
-dssm(questionA,questionB,labels,n_symbols,embed_weights)
+X_train,X_test,Y_train,Y_test = load_data('data/train.csv_1') 
+common_texts = X_train.question1.tolist() + X_train.question2.tolist()
+embed_weights,w2index,n_symbols = word2vec(common_texts)
+dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights)
