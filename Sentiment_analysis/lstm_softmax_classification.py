@@ -130,8 +130,8 @@ def train_lstm(n_symbols,embedding_weights,texts,labels):
     logger.info("Evaluate...")
     score = model.evaluate(x_test, y_test,
                                 batch_size=batch_size)
-    logger.info('Test score:', score)
-    preds = model.predict(x_test, batch_size=batch_size)
+    logger.info('Test score:{0}'.format(score))
+    #preds = model.predict(x_test, batch_size=batch_size)
     yaml_string = model.to_yaml()
     with open('model/lstm.yml', 'w') as outfile:
         outfile.write( yaml.dump(yaml_string, default_flow_style=True) )
