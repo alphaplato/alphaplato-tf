@@ -17,8 +17,7 @@ import pandas as pd
 import numpy as np
 
 import tensorflow as tf
-#from tensorflow.keras import backend as K # auc使用
-import keras.backend.tensorflow_backend as K
+from keras import backend as K # auc使用
 #K.set_session(tf.Session(config=tf.ConfigProto(device_count={'gpu':1})))
 import logging
 
