@@ -1,8 +1,8 @@
 #! /bin/env python
 # -*- coding: utf-8 -*-
-"""
-训练网络，并保存模型，其中LSTM的实现采用Python中的keras库
-"""
+#authour: alphaplato
+#describe: dssm model
+
 import pandas as pd 
 import numpy as np 
 import multiprocessing
