@@ -9,6 +9,7 @@ from keras.models import Model
 from keras.layers.embeddings import Embedding
 from keras.layers import Input,Conv1D,MaxPooling1D,Dense,Dot,Flatten
 from sklearn.model_selection import train_test_split
+from keras.utils import plot_model
 
 import nltk
 import multiprocessing
@@ -26,7 +27,7 @@ cup_count=multiprocessing.cpu_count()
 vocab_dim = 128
 window_size = 4
 min_count = 5
-n_iteration = 4
+n_iteration = 1
 
 max_len =100
 batch_size = 64
@@ -58,9 +59,9 @@ def get_params(model):
     w2index = {w: k+1 for k,w in gensim_dict.items()}
     n_symbols = len(w2index) + 1
     embed_weights = np.zeros((n_symbols,vocab_dim))
-    for w,k in w2index.items():
-        embed_weights[k,:] = model[w]
-    print("the total words,n_symbols:{0}".format(n_symbols))
+    #for w,k in w2index.items():
+    #    embed_weights[k,:] = model[w]
+    logger.info("the total words,n_symbols:{0}".format(n_symbols))
     return embed_weights,w2index,n_symbols
 
 def input_data(w2index,dataset):
@@ -105,21 +106,20 @@ def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
     output = Dot(axes = 1,normalize=True)([outputA,outputB])
     output = Dense(units=1,activation='hard_sigmoid')(output)
     dssm_model = Model(inputs=[my_inputA,my_inputB],output=output)
+    plot_model(dssm_model, to_file='model/model.png')
     dssm_model.compile(optimizer='rmsprop', loss='binary_crossentropy',
               metrics=[auc])
     logging.info("DSSM train...")
     questionA,questionB = input_data(w2index,X_train)
     labels = Y_train
     dssm_model.fit([questionA,questionB],labels, batch_size=batch_size, epochs=n_epoch,verbose=1)
-    logging.info("DSSM save...")
-    dssm_model.save('model/dssm_model.h5')
 
     logging.info("DSSM evaluate...")
     questionA,questionB = input_data(w2index,X_test)
     labels = Y_test 
     dssm_model.fit([questionA,questionB],labels, batch_size=batch_size)
 
-    layer_name = 'flatten_1'
+    #layer_name = 'flatten_1'
     #intermediate_layer_model = Model(input=dssm_model.input,
     #                             output=dssm_model.get_layer(layer_name).output)
     #intermediate_output = intermediate_layer_model.predict([questionA,questionB])
