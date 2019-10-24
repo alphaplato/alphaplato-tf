@@ -119,8 +119,14 @@ def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
     labels = Y_test 
     dssm_model.fit([questionA,questionB],labels, batch_size=batch_size)
 
+    layer_name = 'flatten_1'
+    #intermediate_layer_model = Model(input=dssm_model.input,
+    #                             output=dssm_model.get_layer(layer_name).output)
+    #intermediate_output = intermediate_layer_model.predict([questionA,questionB])
+    #logger.info("intermediate_output:{0}".format(intermediate_output))
+
 logger.setLevel(log_level)
-X_train,X_test,Y_train,Y_test = load_data('data/train.csv') 
+X_train,X_test,Y_train,Y_test = load_data('data/train.csv_1') 
 common_texts = X_train.question1.tolist() + X_train.question2.tolist()
 embed_weights,w2index,n_symbols = word2vec(common_texts)
 dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights)
