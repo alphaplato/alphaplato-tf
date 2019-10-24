@@ -9,7 +9,6 @@ from keras.models import Model
 from keras.layers.embeddings import Embedding
 from keras.layers import Input,Conv1D,MaxPooling1D,Dense,Dot,Flatten
 from sklearn.model_selection import train_test_split
-from keras.utils import plot_model
 
 import nltk
 import multiprocessing
@@ -59,8 +58,8 @@ def get_params(model):
     w2index = {w: k+1 for k,w in gensim_dict.items()}
     n_symbols = len(w2index) + 1
     embed_weights = np.zeros((n_symbols,vocab_dim))
-    #for w,k in w2index.items():
-    #    embed_weights[k,:] = model[w]
+    for w,k in w2index.items():
+        embed_weights[k,:] = model[w]
     logger.info("the total words,n_symbols:{0}".format(n_symbols))
     return embed_weights,w2index,n_symbols
 
@@ -106,7 +105,6 @@ def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
     output = Dot(axes = 1,normalize=True)([outputA,outputB])
     output = Dense(units=1,activation='hard_sigmoid')(output)
     dssm_model = Model(inputs=[my_inputA,my_inputB],output=output)
-    plot_model(dssm_model, to_file='model/model.png')
     dssm_model.compile(optimizer='rmsprop', loss='binary_crossentropy',
               metrics=[auc])
     logging.info("DSSM train...")
@@ -126,7 +124,7 @@ def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
     #logger.info("intermediate_output:{0}".format(intermediate_output))
 
 logger.setLevel(log_level)
-X_train,X_test,Y_train,Y_test = load_data('data/train.csv_1') 
+X_train,X_test,Y_train,Y_test = load_data('data/train.csv') 
 common_texts = X_train.question1.tolist() + X_train.question2.tolist()
 embed_weights,w2index,n_symbols = word2vec(common_texts)
 dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights)
