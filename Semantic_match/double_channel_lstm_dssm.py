@@ -93,8 +93,8 @@ def get_model(n_symbols,embed_weights):
         input_dim=n_symbols,
         weights=[embed_weights],
         input_length=max_len)(my_input)
-    lstm = LSTM(units=256, return_sequences=True)(sent)
-    output = LSTM(units=128)(lstm)
+    lstm = LSTM(units=256,activation='tanh',return_sequences=True)(sent)
+    output = LSTM(units=128,activation='tanh')(lstm)
     return my_input,output
 
 def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
@@ -103,7 +103,7 @@ def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
     output = Dot(axes = 1,normalize=True)([outputA,outputB])
     output = Dense(units=1,activation='hard_sigmoid')(output)
     dssm_model = Model(inputs=[my_inputA,my_inputB],output=output)
-    dssm_model.compile(optimizer='rmsprop', loss='binary_crossentropy',
+    dssm_model.compile(optimizer='adam', loss='binary_crossentropy',
               metrics=[auc])
     logging.info("DSSM train...")
     questionA,questionB = input_data(w2index,X_train)
