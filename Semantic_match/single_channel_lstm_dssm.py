@@ -108,6 +108,7 @@ def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
     output = Dot(axes=1,normalize=True)([outputA,outputB])
     output = Dense(units=1,activation='hard_sigmoid')(output)
     dssm_model = Model(inputs=[inputA,inputB],output=output)
+    logger.info("dssm model summary:{0}".format(dssm_model.summary()))
     dssm_model.compile(optimizer='rmsprop', loss='binary_crossentropy',
               metrics=[auc])
     logging.info("DSSM train...")
