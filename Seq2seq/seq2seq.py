@@ -31,7 +31,6 @@ min_count=1
 n_iteration=4
 sg=1
 
-
 max_len=50
 batch_size=64
 n_epoch=4
@@ -90,12 +89,8 @@ def input_target(target_data):
         for w in sent:
             one_hot=[0]*n_en_sympols
             if w in en2index:
-                #one_hot[en2index[w]]=1
-                #target_sequence.append(one_hot)
                 target_sequence.append(en2index[w])
             else:
-                #one_hot[0]=1
-                #target_sequence.append(one_hot)
                 target_sequence.append(0)
         return target_sequence
     target_data=target_data.applymap(func)
