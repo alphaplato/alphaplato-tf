@@ -1,6 +1,6 @@
 #!/bin/python
-#authour:  alphaplato
-#describe:  seq2seq
+#authour: alphaplato
+#describe: seq2seq
 
 from gensim.models import Word2Vec
 from gensim.corpora.dictionary import Dictionary
