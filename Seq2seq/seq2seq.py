@@ -90,17 +90,20 @@ def input_target(target_data):
         for w in sent:
             one_hot=[0]*n_en_sympols
             if w in en2index:
-                one_hot[en2index[w]]=1
-                target_sequence.append(one_hot)
+                #one_hot[en2index[w]]=1
+                #target_sequence.append(one_hot)
+                target_sequence.append(en2index[w])
             else:
-                one_hot[0]=1
-                target_sequence.append(one_hot)
+                #one_hot[0]=1
+                #target_sequence.append(one_hot)
+                target_sequence.append(0)
         return target_sequence
     target_data=target_data.applymap(func)
     return target_data,n_en_sympols
 
 def split_data(data, target):
     target=sequence.pad_sequences(target.en.tolist(),maxlen=max_len)
+    target=np.expand_dims(target,-1)
     logger.info("the shape target:{0}".format(target.shape))
     X_train,X_test,Y_train,Y_test=train_test_split(data,target,test_size=0.1, random_state=0) 
     ch_input_train=sequence.pad_sequences(X_train.ch.tolist(),maxlen=max_len)
@@ -135,9 +138,9 @@ def get_model(n_symbols,n_en_sympols,embed_weights):
     en_input=Input(shape=(None,),dtype='int32') # input en sequence
     en_sent=embed(en_input)
     decoder_outputs=LSTM(units=h_dim,return_sequences=True)(en_sent,initial_state=encoder_states)
-    #decoder_outputs=TimeDistributed(Dense(max_len))(decoder_outputs)
-    output=Dense(units=n_en_sympols, activation='softmax')(decoder_outputs)
-    model=Model(inputs=[ch_input,en_input],outputs=output)
+    decoder_outputs=TimeDistributed(Dense(n_en_sympols,activation='softmax'))(decoder_outputs)
+    #decoder_outputs=Dense(units=n_en_sympols, activation='softmax')(decoder_outputs)
+    model=Model(inputs=[ch_input,en_input],outputs=decoder_outputs)
     logger.info("model summary:{0}".format(model.summary()))
     return ch_input,en_input,model
 
@@ -147,8 +150,8 @@ def seq2seq_model(sent_data,target_data,n_sympols,w2index,embed_weights):
     ch_input_train,en_input_train,ch_input_test,en_input_test,target_train,target_test=split_data(sent_data,target_data)
 
     ch_input,en_input,model=get_model(n_sympols,n_en_sympols,embed_weights)
-    model.compile(optimizer='adam', loss='categorical_crossentropy',
-              metrics=['accuracy'])
+    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy',
+              metrics=['sparse_categorical_accuracy'])
     logging.info("Seq2seq train...")
     model.fit([ch_input_train,en_input_train],target_train,batch_size=batch_size,epochs=n_epoch,verbose=1)
     logging.info("Seq2seq save...")
