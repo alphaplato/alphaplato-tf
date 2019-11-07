@@ -98,7 +98,7 @@ def input_target(target_data):
 
 def split_data(data, target):
     target=sequence.pad_sequences(target.en.tolist(),maxlen=max_len)
-    target=np.expand_dims(target,-1)
+    target=np.expand_dims(target,-1) # 保证标签项和output的纬度已知，sparse每个标签表示为[2]单元素列表格式
     logger.info("the shape target:{0}".format(target.shape))
     X_train,X_test,Y_train,Y_test=train_test_split(data,target,test_size=0.1, random_state=0) 
     ch_input_train=sequence.pad_sequences(X_train.ch.tolist(),maxlen=max_len)
@@ -133,8 +133,8 @@ def get_model(n_symbols,n_en_sympols,embed_weights):
     en_input=Input(shape=(None,),dtype='int32') # input en sequence
     en_sent=embed(en_input)
     decoder_outputs=LSTM(units=h_dim,return_sequences=True)(en_sent,initial_state=encoder_states)
-    decoder_outputs=TimeDistributed(Dense(n_en_sympols,activation='softmax'))(decoder_outputs)
-    #decoder_outputs=Dense(units=n_en_sympols, activation='softmax')(decoder_outputs)
+    #decoder_outputs=TimeDistributed(Dense(n_en_sympols,activation='softmax'))(decoder_outputs)
+    decoder_outputs=Dense(units=n_en_sympols, activation='softmax')(decoder_outputs)
     model=Model(inputs=[ch_input,en_input],outputs=decoder_outputs)
     logger.info("model summary:{0}".format(model.summary()))
     return ch_input,en_input,model
