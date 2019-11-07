@@ -36,12 +36,12 @@ logger=logging.getLogger()
 
 # set parameters:
 cpu_count = multiprocessing.cpu_count() # 4
-vocab_dim = 128
+vocab_dim = 32
 window_size = 4
 min_count = 5
 n_iteration = 4
 
-max_len =100
+max_len =20
 batch_size = 64
 n_epoch = 4
 
