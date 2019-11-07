@@ -116,7 +116,8 @@ def dssm_model(X_train,X_test,Y_train,Y_test,n_symbols,w2index,embed_weights):
     logging.info("DSSM evaluate...")
     questionA,questionB = input_data(w2index,X_test)
     labels = Y_test 
-    dssm_model.fit([questionA,questionB],labels, batch_size=batch_size)
+    evaluations=dssm_model.evaluate([questionA,questionB],labels, batch_size=batch_size)
+    logger.info("final evaluations:{0}".format(evaluations))
 
 logger.setLevel(log_level)
 X_train,X_test,Y_train,Y_test = load_data('data/train.csv') 
