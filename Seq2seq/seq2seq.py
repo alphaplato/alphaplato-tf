@@ -152,8 +152,8 @@ def seq2seq_model(sent_data,target_data,n_sympols,w2index,embed_weights):
     logging.info("Seq2seq save...")
     model.save('model/seq2seq_model.h5')
     logging.info("Seq2seq evaluate...")
-    evaluations=model.evaluate([ch_input_test,en_input_test],target_test, batch_size=batch_size)
-    logger.info("final evaluations:{0}".format(evaluations))
+    score=model.evaluate([ch_input_test,en_input_test],target_test, batch_size=batch_size)
+    logger.info("Test score:{0}".format(score))
 
 logger.setLevel(log_level)
 sent_data,target_data=load_data('data/cmn.txt') 
