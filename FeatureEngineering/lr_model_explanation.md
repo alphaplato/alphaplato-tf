@@ -1,6 +1,10 @@
 # 从 Odds 角度理解 Logistic Regression 模型的参数
 
-文章来源：[《从 Odds 角度理解 Logistic Regression 模型的参数》](http://vividfree.github.io/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/2015/12/13/understanding-logistic-regression-using-odds)
+按：Logistic Regression 为什么输出的是概率呢？这个问题要回到最开始，即是因为sigmoid函数本身就是高斯分布的逼近，之后才有了Logistic Regression 模型。
+
+在这个基础上我们来看那可能Logistic Regression 参数都是什么含义，以下的这篇文章很好，相信能解决大部分人的疑问。
+
+文章转自：[《从 Odds 角度理解 Logistic Regression 模型的参数》](http://vividfree.github.io/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/2015/12/13/understanding-logistic-regression-using-odds)
 
 ## 1. 引言
 无论在学术界，还是在工业界，Logistic Regression(LR, 逻辑回归)模型[1]是常用的分类模型，被用于各种分类场景和点击率预估问题等，它也是Max Entropy(ME, 最大熵)模型[2]，或者说Softmax Regression模型[3]，在二分类的一种特例。
