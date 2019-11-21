@@ -74,7 +74,7 @@
 
 > 7. Attribute Information: 
 
-age: continuous.
+> age: continuous.
 workclass: Private, Self-emp-not-inc, Self-emp-inc, Federal-gov, Local-gov, State-gov, Without-pay, Never-worked.
 fnlwgt: continuous.
 education: Bachelors, Some-college, 11th, HS-grad, Prof-school, Assoc-acdm, Assoc-voc, 9th, 7th-8th, 12th, Masters, 1st-4th, 10th, Doctorate, 5th-6th, Preschool.
@@ -96,7 +96,7 @@ class: >50K, <=50K
 
 > 9. Class Distribution: 
 
- Probability for the label '>50K'  : 23.93% / 24.78% (without unknowns)
+> Probability for the label '>50K'  : 23.93% / 24.78% (without unknowns)
  Probability for the label '<=50K' : 76.07% / 75.22% (without unknowns)
 
 
