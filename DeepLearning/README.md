@@ -92,7 +92,7 @@ class: >50K, <=50K
 
 > 8. Missing Attribute Values: 
 
-   7% have missing values.
+>   7% have missing values.
 
 > 9. Class Distribution: 
 
