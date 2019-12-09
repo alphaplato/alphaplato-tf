@@ -16,4 +16,3 @@ def model():
 
 out = model()
 print(out.summary())
-
