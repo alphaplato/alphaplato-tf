@@ -20,7 +20,7 @@
             "embedding":16
         },
         {
-            "name":"educational-num",
+            "name":"education-num",
             "type":"id",
             "hash_size":30,
             "embedding":16
@@ -50,7 +50,7 @@
             "embedding":16
         },
         {
-            "name":"gender",
+            "name":"sex",
             "type":"id",
             "hash_size":2,
             "embedding":16
