@@ -1,22 +1,45 @@
-#!/bin/python3 
+#!/bin/python3
 #coding:utf-8
-#author:alphaplato
 
-import sys
-import pandas as pd 
+import pandas as pd
 import tensorflow as tf
+import json
+import sys
 
-def tfrecords(infile,outfile):
-    names = ['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','label']
-    csv = pd.read_csv("data/"+infile,names = names).values
-    csv['label'] = csv['label'].apply(lambda x : (x=='>50K'))
-    with tf.python_io.TFRecordWriter("data/"+outfile+".tfrecords") as writer:
-        for row in csv:
-            features, label = row[:-1], row[-1]
-            example = tf.train.Example()
-            example.features.feature["features"].float_list.value.extend(features)
-            example.features.feature["label"].int64_list.value.append(label)
-            writer.write(example.SerializeToString())
+class CsvTfrecord(object):
+    def __init__(self,csv_fin_path,fea_json_path,fout_tfrecord):
+        self.csv_fin_path = csv_fin_path
+        self.fea_json_path = fea_json_path
+        self.fout_tfrecord = fout_tfrecord
+        self._mk_tfrecord()
+
+    def _feature_type(self):
+        with open(self.fea_json_path,'r') as fr:
+            fea_json = json.load(fr)
+            fea_list = fea_json['features']
+            self.fea_list = fea_list
+
+    def _mk_tfrecord(self):
+        names=['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','label']
+        csv = pd.read_csv(self.csv_fin_path,names=names,skiprows=1)
+        csv.label = csv.label.apply(lambda x: int(x=='>50k'))
+
+        csv = csv.values
+        self._feature_type()
+        with tf.python_io.TFRecordWriter(self.fout_tfrecord) as writer:
+            for row in csv:
+                features, label = row[:-1], row[-1]
+                fea_dict = dict(zip(names,features))
+                feature = {}
+                for fea in self.fea_list:
+                    if fea['type'] == 'raw':
+                        feature[fea['name']] = tf.train.Feature(float_list=tf.train.FloatList(value=[float(fea_dict[fea['name']])]))
+                    elif fea['type'] == 'id':
+                        feature[fea['name']] = tf.train.Feature(bytes_list=tf.train.BytesList(value=[str(fea_dict[fea['name']]).encode()]))
+                feature['label'] = tf.train.Feature(int64_list=tf.train.Int64List(value=[label]))
+                example = tf.train.Example(features = tf.train.Features(feature=feature))
+                writer.write(example.SerializeToString())
 
 if __name__=='__main__':
-    tfrecords(sys.argv[1],sys.argv[2])
+    fin,fjson,fout = sys.argv[1:]
+    CsvTfrecord(fin,fjson,fout)
