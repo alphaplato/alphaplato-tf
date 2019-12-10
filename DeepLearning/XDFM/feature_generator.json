@@ -50,7 +50,7 @@
             "embedding":16
         },
         {
-            "name":"gender",
+            "name":"sex",
             "type":"id",
             "hash_size":2,
             "embedding":16
