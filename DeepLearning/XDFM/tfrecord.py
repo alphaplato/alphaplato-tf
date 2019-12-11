@@ -1,5 +1,8 @@
 #!/bin/python3
 #coding:utf-8
+#Copyright 2018 Alphaplato. All Rights Reserved.
+#Desc:make tfrecord from csv
+#=======================================================
 
 import pandas as pd
 import tensorflow as tf
