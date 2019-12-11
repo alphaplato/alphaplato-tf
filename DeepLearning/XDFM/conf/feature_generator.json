@@ -2,71 +2,84 @@
     "features":[
         {
             "name":"age",
-            "type":"raw"
+            "feature_type":"raw",
+            "value_type":"Double"
         },
         {
             "name":"workclass",
-            "type":"id",
+            "feature_type":"id",
+            "value_type":"String",
             "hash_size":20,
             "embedding":16
         },
         {
             "name":"education",
-            "type":"id",
+            "feature_type":"id",
+            "value_type":"String",
             "hash_size":20,
             "embedding":16
         },
         {
             "name":"education-num",
-            "type":"id",
+            "feature_type":"id",
+            "value_type":"String",
             "hash_size":30,
             "embedding":16
         },
         {
             "name":"marital-status",
-            "type":"id",
+            "feature_type":"id",
+            "value_type":"String",
             "hash_size":20,
             "embedding":16
         },
         {
             "name":"occupation",
-            "type":"id",
+            "feature_type":"id",
+            "value_type":"String",
             "hash_size":20,
             "embedding":16
         },
         {
             "name":"relationship",
-            "type":"id",
+            "feature_type":"id",
+            "value_type":"String",
             "hash_size":10,
             "embedding":16
         },
         {
             "name":"race",
-            "type":"id",
+            "feature_type":"id",
+            "value_type":"String",
             "hash_size":10,
             "embedding":16
         },
         {
             "name":"sex",
-            "type":"id",
+            "feature_type":"id",
+            "value_type":"String",
             "hash_size":2,
             "embedding":16
         },
         {
             "name":"capital-gain",
-            "type":"raw"
+            "feature_type":"raw",
+            "value_type":"Double"
         },
         {
             "name":"capital-loss",
-            "type":"raw"
+            "feature_type":"raw",
+            "value_type":"Double"
         },
         {
             "name":"hours-per-week",
-            "type":"raw"
+            "feature_type":"raw",
+            "value_type":"Double"
         },
         {
             "name":"native-country",
-            "type":"id",
+            "feature_type":"id",
+            "value_type":"String",
             "hash_size":100,
             "embedding":16
         }
@@ -74,7 +87,7 @@
     "label":[
         {
             "name":"income",
-            "type":"lr",
+            "feature_type":"lr",
             "postive":">50K"
         }
     ]
