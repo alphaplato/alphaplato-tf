@@ -2,10 +2,7 @@
     "features":[
         {
             "name":"age",
-            "type":"raw",
-            "one_hot":10,
-            "interval":10,
-            "embedding":16
+            "type":"raw"
         },
         {
             "name":"workclass",
