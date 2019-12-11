@@ -16,7 +16,7 @@ class CsvTfrecord(object):
         self.fout_tfrecord = fout_tfrecord
         self._mk_tfrecord()
 
-    def __feature_json(self):
+    def _feature_json(self):
         with open(self.fea_json_path,'r') as fr:
             fea_json = json.load(fr)
             fea_list = fea_json['features']
@@ -28,7 +28,7 @@ class CsvTfrecord(object):
         csv.label = csv.label.apply(lambda x: int(x=='>50k'))
 
         csv = csv.values
-        self.__feature_json()
+        self._feature_json()
         with tf.python_io.TFRecordWriter(self.fout_tfrecord) as writer:
             for row in csv:
                 features, label = row[:-1], row[-1]
