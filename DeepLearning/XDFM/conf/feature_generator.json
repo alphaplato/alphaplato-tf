@@ -54,9 +54,7 @@
         },
         {
             "name":"capital-gain",
-            "type":"raw",
-            "one_hot":10,
-            "interval":1000
+            "type":"raw"
         },
         {
             "name":"capital-loss",
