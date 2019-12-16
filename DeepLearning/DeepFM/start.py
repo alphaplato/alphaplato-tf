@@ -101,7 +101,7 @@ def main(_):
 
     if FLAGS.clear_existing_model:
         try:
-            shutil.rmtree(FLAGS.model_dir)
+            shutil.rmtree('./model')
         except Exception as e:
             print(e, "at clear_existing_model")
         else:
@@ -116,7 +116,7 @@ def main(_):
     md = DeepFM(fg)
     deepfm = Model(fg,md)
 
-    config = tf.estimator.RunConfig().replace(session_config = tf.ConfigProto(device_count={'GPU':0, 'CPU':4}),
+    config = tf.estimator.RunConfig().replace(session_config = tf.ConfigProto(device_count={'GPU':0, 'CPU':FLAGS.num_threads}),
             log_step_count_steps=FLAGS.log_steps, save_summary_steps=FLAGS.log_steps)
     model = tf.estimator.Estimator(model_fn=deepfm.model_fn, model_dir='./model/', params=model_params, config=config)
 
