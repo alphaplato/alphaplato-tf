@@ -1,16 +1,21 @@
-import json
-import multiprocessing
+#!/bin/python3
+#coding:utf-8
+#Copyright 2019 Alphaplato. All Rights Reserved.
+#Desc:deepfm model
+#=======================================================
+
 import tensorflow as tf
 
-class Model(object):
+class DeepFM(object):
     def __init__(self,fg):
-        self.fg = fg
+        self._model_name = 'DeepFM'
+        self._fg = fg
 
-    def build_logits(self,features,labels,mode,params):
-        feature_columns =self.fg.feature_columns
-        l2_reg = params["l2_reg"]
-        layers = list(map(int, params["deep_layers"].split(',')))
-        dropout = list(map(float, params["dropout"].split(',')))
+    def build_logits(self,features,mode,params):
+        feature_columns = self._fg.feature_columns
+        layers = params['deep_layers']
+        dropout = params['dropout']
+        l2_reg = params['l2_reg']
 
         with tf.variable_scope("deepfm"):
             with tf.variable_scope("lr-part"):
@@ -23,11 +28,12 @@ class Model(object):
                     lr_out = tf.layers.batch_normalization(lr_out,training = False)
 
             with tf.variable_scope("fm-part"):
-                feature_ids = [feature_columns['fm'][fea['feature_name']] for fea in self.fg._feature_json['features'] if fea['feature_type'] == 'id']
+                feature_ids = [feature_columns['fm'][fea['feature_name']] for fea in self._fg._feature_json['features'] if fea['feature_type'] == 'id']
                 ids_fields_size = len(feature_ids)
                 ids_input = tf.feature_column.input_layer(features,feature_ids)
 
-                raw_fields = [fea['feature_name'] for fea in self.fg._feature_json['features'] if fea['feature_type'] == 'raw']
+                raw_fields = [fea['feature_name'] for fea in self._fg._feature_json['features'] if fea['feature_type'] == 'raw']
+                raw_fields_size = len(raw_fields)
                 feature_raws = [feature_columns['fm'][feature_name] for feature_name in raw_fields]
                 raws_value_input = tf.feature_column.input_layer(features,feature_raws)
 
@@ -50,66 +56,19 @@ class Model(object):
                 fm_out = tf.reshape(fm_out,[-1,1])
 
             with tf.variable_scope("deep-part"):
-                kernel_regularizer = tf.contrib.layers.l2_regularizer(l2_reg)
                 deep_feature_columns = [feature_columns['deep'][feature_name] for feature_name in feature_columns['deep']]
                 deep_input = tf.feature_column.input_layer(features,deep_feature_columns)
                 for i in range(len(layers)):
-                    deep_input = tf.layers.dense(deep_input,layers[i],activation=tf.nn.relu,kernel_regularizer=kernel_regularizer)
+                    deep_input = tf.layers.dense(deep_input,layers[i],activation=tf.nn.relu,kernel_regularizer=tf.contrib.layers.l2_regularizer(l2_reg))
                     if mode == tf.estimator.ModeKeys.TRAIN:
                         deep_input = tf.layers.batch_normalization(deep_input,training = True)
                         deep_input = tf.nn.dropout(deep_input,dropout[i])
                     else:
                         deep_input = tf.layers.batch_normalization(deep_input,training = False)
-                deep_out = tf.layers.dense(deep_input,1,kernel_regularizer=kernel_regularizer)
-            return lr_out,fm_out,deep_out
+                deep_out = tf.layers.dense(deep_input,1) # 注意：输出层使用线性激活函数！！！！
+            
+            y_input = tf.concat([fm_out,deep_out],axis=1)
+            # y_input = tf.concat([lr_out,fm_out,deep_out],axis=1)
+            y_out = tf.layers.dense(y_input,1)
 
-
-    def model_fn(self,features,labels,mode,params): 
-        feature_columns =self.fg.feature_columns
-        learning_rate = params["learning_rate"]
-        optimizer = params["optimizer"]   
-
-        lr_out,fm_out,deep_out = self.build_logits(features,labels,mode,params)
-        y_out = lr_out +  fm_out + deep_out 
-        
-        labels = tf.cast(labels,tf.float32)
-        pred = tf.sigmoid(y_out) 
-
-        predictions={"prob": pred}
-        export_outputs = {tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: tf.estimator.export.PredictOutput(predictions)} 
-        if mode == tf.estimator.ModeKeys.PREDICT:
-            return tf.estimator.EstimatorSpec(
-                mode=mode,
-                predictions=predictions,
-                export_outputs=export_outputs)           
-        
-        loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) + \
-            tf.losses.get_regularization_loss()
-
-        eval_metric_ops = {
-            "auc": tf.metrics.auc(labels, pred)
-            }
-        if mode == tf.estimator.ModeKeys.EVAL:
-            return tf.estimator.EstimatorSpec(
-                mode=mode,
-                predictions=predictions,
-                loss=loss,
-                eval_metric_ops=eval_metric_ops)
-
-        if optimizer == 'Adam':
-            optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, beta1=0.9, beta2=0.999, epsilon=1e-8)
-        elif optimizer == 'Adagrad':
-            optimizer = tf.train.AdagradOptimizer(learning_rate=learning_rate, initial_accumulator_value=1e-8)
-        elif optimizer == 'Momentum':
-            optimizer = tf.train.MomentumOptimizer(learning_rate=learning_rate, momentum=0.95)
-        elif optimizer == 'ftrl':
-            optimizer = tf.train.FtrlOptimizer(learning_rate)
-
-        train_op = optimizer.minimize(loss, global_step=tf.train.get_global_step())
-
-        if mode == tf.estimator.ModeKeys.TRAIN:
-            return tf.estimator.EstimatorSpec(
-                mode=mode,
-                predictions=predictions,
-                loss=loss,
-                train_op=train_op)
+            return  y_out
