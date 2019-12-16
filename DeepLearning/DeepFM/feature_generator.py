@@ -7,6 +7,7 @@ import json
 import multiprocessing
 import tensorflow as tf
 
+MULTI_THREADING = True
 
 def feature_json(fea_json_path):
     with open(fea_json_path,'r') as fr:
@@ -66,7 +67,8 @@ class FeatureGenerator(object):
         return features,label
 
     def input_fn(self,data_path,mode=tf.estimator.ModeKeys.TRAIN,batch_size=1,num_epochs=1):
-        dataset = tf.data.TFRecordDataset(data_path,num_parallel_reads=4)
+        num_threads = multiprocessing.cpu_count() if MULTI_THREADING else 1
+        dataset = tf.data.TFRecordDataset(data_path,num_parallel_reads=num_threads)
         dataset = dataset.map(self._parser).repeat(num_epochs).batch(batch_size)
         features,label = dataset.make_one_shot_iterator().get_next()
         return features,label

@@ -117,7 +117,7 @@ def main(_):
     model = Model(fg)
 
     config = tf.estimator.RunConfig().replace(session_config = tf.ConfigProto(device_count={'GPU':0, 'CPU':FLAGS.num_threads}),
-            log_step_count_steps=1000, save_summary_steps=1000)
+            log_step_count_steps=FLAGS.log_steps, save_summary_steps=FLAGS.log_steps)
     DeepFM = tf.estimator.Estimator(model_fn=model.model_fn, model_dir='./model/', params=model_params, config=config)
 
     tr_files = "./data/train.tfrecords"
