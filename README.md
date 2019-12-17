@@ -1,9 +1,11 @@
 # alphaplato
 
 ## 1、DeepLearning
-   这部分在推荐算法中的总结，面向的是大规模分布式算法，在完成网络结构时采用了tensorflow的feature_column的处理方式，该方式是tensorflow分布式特征处理的典型方式。
+   这部分在推荐算法中的总结，面向的是大规模分布式算法，在完成网络结构时采用了tensorflow的feature_column函数分布式特征处理的处理方式。
+   在使用深度网络其中需要注意的一点是数据的归一化，因为不同数值特征通常不在一个量级，比如CTR特征和counter计数特征，直接结果是网络不稳定甚至不收敛；所以在网络层级上适当增加batch_normalization的trick非常重要，改函数可以将网络数据高斯归一化。
    
 ### [1] DeepFM
+   注意LR、FM、DEEP三部分网络的组合，在本demo中舍弃了LR的网络。原则是，联合网络当出现特别差的网络时会影响其他网络的训练，即出现木桶效应，本demo实际运行时只保留FM和DEEP部分，提高模型效果。
 * DCN
 * PNN
 
