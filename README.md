@@ -3,7 +3,7 @@
 ## 1、DeepLearning
    这部分在推荐算法中的总结，面向的是大规模分布式算法，在完成网络结构时采用了tensorflow的feature_column的处理方式，该方式是tensorflow分布式特征处理的典型方式。
    
-* DeepFM
+### [1] DeepFM
 * DCN
 * PNN
 
