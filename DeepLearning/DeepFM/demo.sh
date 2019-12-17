@@ -1,1 +1,1 @@
-python3 start.py --task_type=train --learning_rate=0.0005 --l2_reg=0.01 --optimizer=Adam --num_epochs=20 --batch_size=32  --dropout=0.3,0.5,0.7 --deep_layers=20,10,5 --log_steps=2000 --num_threads=8 --clear_existing_model=True
+python3.7 start.py --task_type=train --learning_rate=0.0005 --l2_reg=0.01 --optimizer=Adam --num_epochs=20 --batch_size=32  --dropout=0.7,0.7,0.5 --deep_layers=20,10,5 --log_steps=2000 --num_threads=8 --clear_existing_model=True

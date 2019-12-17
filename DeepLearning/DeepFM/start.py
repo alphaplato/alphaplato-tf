@@ -22,16 +22,15 @@ tf.app.flags.DEFINE_string("worker_hosts", '', "Comma-separated list of hostname
 tf.app.flags.DEFINE_string("job_name", '', "One of 'ps', 'worker'")
 tf.app.flags.DEFINE_integer("task_index", 0, "Index of task within the job")
 tf.app.flags.DEFINE_integer("num_threads", 16, "Number of threads")
-tf.app.flags.DEFINE_integer("embedding_size", 32, "Embedding size")
-tf.app.flags.DEFINE_integer("num_epochs", 10, "Number of epochs")
+tf.app.flags.DEFINE_integer("num_epochs", 20, "Number of epochs")
 tf.app.flags.DEFINE_integer("batch_size", 64, "Number of batch size")
 tf.app.flags.DEFINE_integer("log_steps", 1000, "save summary every steps")
 tf.app.flags.DEFINE_float("learning_rate", 0.0005, "learning rate")
 tf.app.flags.DEFINE_float("l2_reg", 0.01, "L2 regularization")
 tf.app.flags.DEFINE_string("optimizer", 'Adam', "optimizer type {Adam, Adagrad, GD, Momentum}")
-tf.app.flags.DEFINE_string("deep_layers", '256,128,64', "deep layers")
-tf.app.flags.DEFINE_string("dropout", '0.5,0.5,0.5', "dropout rate")
-tf.app.flags.DEFINE_boolean("batch_norm", False, "perform batch normaization (True or False)")
+tf.app.flags.DEFINE_string("deep_layers", '20,10,5', "deep layers")
+tf.app.flags.DEFINE_integer("dcn_layers", 3, "deep layers")
+tf.app.flags.DEFINE_string("dropout", '0.7,0.7,0.5', "dropout rate")
 tf.app.flags.DEFINE_string("data_dir", '', "data dir")
 tf.app.flags.DEFINE_string("dt_dir", '', "data dt partition")
 tf.app.flags.DEFINE_string("model_dir", '', "model check point dir")
@@ -95,6 +94,7 @@ def main(_):
         "learning_rate": FLAGS.learning_rate,
         "l2_reg": FLAGS.l2_reg,
         "deep_layers": list(map(int,FLAGS.deep_layers.split(','))),
+        "dcn_layers":FLAGS.dcn_layers,
         "dropout": list(map(float,FLAGS.dropout.split(','))),
         "optimizer":FLAGS.optimizer
     }
@@ -114,19 +114,19 @@ def main(_):
     fea_json = feature_json('./feature_generator.json')
     fg = FeatureGenerator(fea_json)
     md = DeepFM(fg)
-    deepfm = Model(fg,md)
+    model = Model(fg,md)
 
     config = tf.estimator.RunConfig().replace(session_config = tf.ConfigProto(device_count={'GPU':0, 'CPU':FLAGS.num_threads}),
             log_step_count_steps=FLAGS.log_steps, save_summary_steps=FLAGS.log_steps)
-    model = tf.estimator.Estimator(model_fn=deepfm.model_fn, model_dir='./model/', params=model_params, config=config)
+    EST = tf.estimator.Estimator(model_fn=model.model_fn, model_dir='./model/', params=model_params, config=config)
 
     if FLAGS.task_type == 'train':
-        train_spec = tf.estimator.TrainSpec(input_fn=lambda: deepfm.input_fn(tr_files, num_epochs=FLAGS.num_epochs, batch_size=FLAGS.batch_size))
-        eval_spec = tf.estimator.EvalSpec(input_fn=lambda: deepfm.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), steps=None, start_delay_secs=1000, throttle_secs=1200)
-        tf.estimator.train_and_evaluate(model, train_spec, eval_spec)
+        train_spec = tf.estimator.TrainSpec(input_fn=lambda: model.input_fn(tr_files, num_epochs=FLAGS.num_epochs, batch_size=FLAGS.batch_size))
+        eval_spec = tf.estimator.EvalSpec(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), steps=None, start_delay_secs=1000, throttle_secs=1200)
+        tf.estimator.train_and_evaluate(EST, train_spec, eval_spec)
     elif FLAGS.task_type == 'eval':
-        model.evaluate(input_fn=lambda: deepfm.input_fn(tr_files, num_epochs=1, batch_size=FLAGS.batch_size))
-        model.evaluate(input_fn=lambda: deepfm.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size))
+        model.evaluate(input_fn=lambda: model.input_fn(tr_files, num_epochs=1, batch_size=FLAGS.batch_size))
+        model.evaluate(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size))
     elif FLAGS.task_type == 'infer':
         preds = Estimator.predict(input_fn=lambda: input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), predict_keys="prob")
     #     with open(FLAGS.data_dir+"/pred.txt", "w") as fo:
