@@ -7,6 +7,8 @@
 * PNN
 * XDeepFM
 
+**已完成框架升级，并将DCN，DeepFM更新至最新版；框架升级后，对于任何算法，只需要修改制定的model文件和fg，其他代码复用即可。**
+
 ### 2、数据集来源
 
 预测收入的数据集，来源于[kaggle](https://www.kaggle.com/wenruliu/adult-income-dataset/data)。
