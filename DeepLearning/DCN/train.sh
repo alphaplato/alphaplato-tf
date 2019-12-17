@@ -1,1 +1,0 @@
-python3 deep_dcn.py --task_type=train --learning_rate=0.0005 --optimizer=Adam --num_epochs=12 --batch_size=32 --field_size=13 --feature_size=202 --dropout=0.5,0.5,0.5 --deep_layers=1024,512,256 --log_steps=2000 --num_threads=8 --model_dir=./model_ckpt/ --clear_existing_model=True --l2_reg=0.05  --data_dir=./data --embedding_size=32

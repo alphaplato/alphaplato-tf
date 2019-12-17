@@ -1,1 +1,0 @@
-python3 deep_dcn.py --task_type=eval --learning_rate=0.00001 --optimizer=Adam --num_epochs=1 --batch_size=64 --field_size=13 --feature_size=202 --dropout=1,1,1 --deep_layers=128,64,32 --log_steps=1000 --num_threads=8 --model_dir=./model_ckpt/DeepFM/ --l2_reg=0.001  --data_dir=./data --embedding_size=16
