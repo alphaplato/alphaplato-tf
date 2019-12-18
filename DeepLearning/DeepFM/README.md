@@ -2,7 +2,7 @@
 
 ## 1、网络结构
 
-![deepfm strcuture]()
+![deepfm strcuture](https://github.com/alphaplato/alphaplato/blob/master/image/DeepLearning/deepfm.png)
 
 ## 2、算法实现
 
