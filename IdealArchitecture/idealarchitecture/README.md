@@ -1,0 +1,1 @@
+[IdealArchitecture](https://github.com/alphaplato/alphaplato/blob/master/image/IdealArchitecture/IdealArchitecture.jpg)
