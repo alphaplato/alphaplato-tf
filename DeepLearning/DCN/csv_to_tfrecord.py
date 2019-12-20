@@ -25,6 +25,8 @@ class CsvTfrecord(object):
         names=['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','label']
         csv = pd.read_csv(self.csv_fin_path,names=names,skiprows=1)
         csv.label = csv.label.apply(lambda x: int('>' in x.strip()))
+        csv['capital-gain'] =  csv['capital-gain'].apply(lambda x: math.log(x+1))
+        csv['capital-loss'] =  csv['capital-loss'].apply(lambda x: math.log(x+1))
 
         csv = csv.values
         self._feature_json()
