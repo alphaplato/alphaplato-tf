@@ -9,6 +9,8 @@
 
 **已完成框架升级，并将DCN，DeepFM更新至最新版；框架升级后，对于算法实现，只需要修改制定的model和fg中的两个函数即可实现数据到nn网络闭环，其他代码复用。大大提高算法开发效率。**
 
+**打包成package，可将不同算法文件文件下的重复文件保存为一份。**
+
 ### 2、数据集来源
 
 预测收入的数据集，来源于[kaggle](https://www.kaggle.com/wenruliu/adult-income-dataset/data)。
