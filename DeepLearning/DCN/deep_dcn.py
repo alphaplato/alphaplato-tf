@@ -37,10 +37,10 @@ class DCN(object):
                     bl = tf.get_variable(name= "cross_b_{0}".format(i),shape=[embed_dim],regularizer=tf.contrib.layers.l2_regularizer(l2_reg),initializer=tf.truncated_normal_initializer(stddev=0.01))
                     xlw = tf.matmul(xl,tf.reshape(wl,shape=[-1,1]))
                     xl = tf.multiply(deep_input,xlw) + bl + xl
-                    if mode == tf.estimator.ModeKeys.TRAIN:
-                        xl = tf.layers.batch_normalization(xl,training = True)
-                    else:
-                        xl = tf.layers.batch_normalization(xl,training = False)
+                    # if mode == tf.estimator.ModeKeys.TRAIN:
+                    #     xl = tf.layers.batch_normalization(xl,training = True)
+                    # else:
+                    #     xl = tf.layers.batch_normalization(xl,training = False)
             
             y_input = tf.concat([dnn_input,xl],axis=1)
             y_out = tf.layers.dense(xl,1)
