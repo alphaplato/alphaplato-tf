@@ -7,6 +7,7 @@
 import pandas as pd
 import tensorflow as tf
 import json
+import math
 
 class CsvTfrecord(object):
     def __init__(self,csv_fin_path,fea_json_path,fout_tfrecord):
