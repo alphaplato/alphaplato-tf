@@ -1,6 +1,6 @@
-## 工业化深度学习demo
+## 工业化深度学习算法
 
-### 1、算法列表
+### 一、算法列表
 
 * DCN
 * DeepFM
@@ -25,7 +25,7 @@ demo使用说明见：
 ##### 3）集群模式：
 增加--dist_mode=2，执行 sh demo.sh 
 
-### 2、数据集来源
+### 二、数据集来源
 
 预测收入的数据集，来源于[kaggle](https://www.kaggle.com/wenruliu/adult-income-dataset/data)。
 
