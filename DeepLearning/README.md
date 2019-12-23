@@ -20,7 +20,7 @@ demo使用说明见：
 分别执行：
 * [1] sh demo.sh ps
 * [2] sh demo.sh chief
-* [3] sh demo.sh worker
+* [3] sh demo.sh worker    
 注意model清除参数的设置。
 ##### 3）集群模式：
 增加--dist_mode=2，执行 sh demo.sh 
