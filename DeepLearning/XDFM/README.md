@@ -12,4 +12,8 @@
 
 * 核心思想就是通过进一步利用特征信息交叉，而且是以特征域为单位进行。
 
-ps:xdeepfm效果上是最好的，个人认为其理论也是所有这些FM升级到深度模型变种中最好的。但是，高阶次的交叉增加了模型的时间复杂度，训练时间成本高，且模型上线时非常挑战serving服务的响应性能。
+ps:xdeepfm效果上是最好的，个人认为其理论也是所有这些FM升级到深度模型变种中最好的，可以说是纯FM深度延伸的终结版。但是，高阶次的交叉增加了模型的时间复杂度，训练时间成本高，且模型上线时非常挑战serving服务的响应性能。
+
+## 参考文献：
+* [xDeepFM: Combining Explicit and Implicit Feature Interactions
+for Recommender Systems](https://arxiv.org/pdf/1803.05170.pdf)
