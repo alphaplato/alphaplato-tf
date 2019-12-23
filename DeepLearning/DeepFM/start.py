@@ -103,7 +103,7 @@ def main(_):
 
     if FLAGS.clear_existing_model:
         try:
-            shutil.rmtree('./model/*')
+            shutil.rmtree('./model')
         except Exception as e:
             print(e, "at clear_existing_model")
         else:
