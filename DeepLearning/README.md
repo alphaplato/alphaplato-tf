@@ -11,6 +11,17 @@
 
 **打包成package，可将不同算法文件文件下的重复文件保存为一份。**
 
+demo使用说明见：
+1、执行 python3.7 csv_to_tfrecord.py
+2、执行 sh demo.sh 
+    1) 单机模式：去掉--dist_mode参数
+    2）分布式模式：增加--dist_mode=1 --job_name=${1}
+        分别执行：[1] sh demo.sh ps
+        [2] sh demo.sh chief
+        [3] sh demo.sh worker
+        注意model清除参数的设置。
+    3）集群模式：增加--dist_mode=2
+
 ### 2、数据集来源
 
 预测收入的数据集，来源于[kaggle](https://www.kaggle.com/wenruliu/adult-income-dataset/data)。
