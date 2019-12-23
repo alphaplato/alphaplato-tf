@@ -17,8 +17,8 @@ from model import Model
 #################### CMD Arguments ####################
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_integer("dist_mode", 0, "distribuion mode {0-loacal, 1-single_dist, 2-multi_dist}")
-tf.app.flags.DEFINE_string("ps_hosts", '', "Comma-separated list of hostname:port pairs")
-tf.app.flags.DEFINE_string("worker_hosts", '', "Comma-separated list of hostname:port pairs")
+tf.app.flags.DEFINE_string("ps_hosts", 'localhost:2222', "Comma-separated list of hostname:port pairs")
+tf.app.flags.DEFINE_string("worker_hosts", 'localhost:2223,localhost:2224', "Comma-separated list of hostname:port pairs")
 tf.app.flags.DEFINE_string("job_name", '', "One of 'ps', 'worker'")
 tf.app.flags.DEFINE_integer("task_index", 0, "Index of task within the job")
 tf.app.flags.DEFINE_integer("num_threads", 16, "Number of threads")
@@ -33,7 +33,7 @@ tf.app.flags.DEFINE_integer("dcn_layers", 3, "deep layers")
 tf.app.flags.DEFINE_string("dropout", '0.7,0.7,0.5', "dropout rate")
 tf.app.flags.DEFINE_string("data_dir", '', "data dir")
 tf.app.flags.DEFINE_string("dt_dir", '', "data dt partition")
-tf.app.flags.DEFINE_string("model_dir", '', "model check point dir")
+tf.app.flags.DEFINE_string("model_dir", './model', "model check point dir")
 tf.app.flags.DEFINE_string("servable_model_dir", '', "export servable model for TensorFlow Serving")
 tf.app.flags.DEFINE_string("task_type", 'train', "task type {train, infer, eval, export}")
 tf.app.flags.DEFINE_boolean("clear_existing_model", False, "clear existing model or not")
@@ -42,7 +42,9 @@ tf.app.flags.DEFINE_boolean("clear_existing_model", False, "clear existing model
 def set_dist_env():
     if FLAGS.dist_mode == 1:  # 本地分布式测试模式1 chief, 1 ps, 1 evaluator
         ps_hosts = FLAGS.ps_hosts.split(',')
-        chief_hosts = FLAGS.chief_hosts.split(',')
+        worker_hosts = FLAGS.worker_hosts.split(',')
+        chief_hosts = worker_hosts[0:1]  # get first worker as chief
+        worker_hosts = worker_hosts[1:]
         task_index = FLAGS.task_index
         job_name = FLAGS.job_name
         print('ps_host', ps_hosts)
@@ -51,7 +53,7 @@ def set_dist_env():
         print('task_index', str(task_index))
         # 无worker参数
         tf_config = {
-            'cluster': {'chief': chief_hosts, 'ps': ps_hosts},
+            'cluster': {'chief': chief_hosts, 'worker': worker_hosts, 'ps': ps_hosts},
             'task': {'type': job_name, 'index': task_index}
         }
         print(json.dumps(tf_config))
@@ -60,7 +62,7 @@ def set_dist_env():
         ps_hosts = FLAGS.ps_hosts.split(',')
         worker_hosts = FLAGS.worker_hosts.split(',')
         chief_hosts = worker_hosts[0:1]  # get first worker as chief
-        worker_hosts = worker_hosts[2:]  # the rest as worker
+        worker_hosts = worker_hosts[1:]  # the rest as worker
         task_index = FLAGS.task_index
         job_name = FLAGS.job_name
         print('ps_host', ps_hosts)
@@ -88,7 +90,7 @@ def set_dist_env():
 
 def main(_):
     tf.logging.set_verbosity(tf.logging.INFO)
-    # set_dist_env()
+    set_dist_env()
     #------bulid Tasks------
     model_params = {
         "learning_rate": FLAGS.learning_rate,
@@ -101,7 +103,7 @@ def main(_):
 
     if FLAGS.clear_existing_model:
         try:
-            shutil.rmtree('./model')
+            shutil.rmtree('./model/*')
         except Exception as e:
             print(e, "at clear_existing_model")
         else:
