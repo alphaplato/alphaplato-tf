@@ -90,7 +90,7 @@ def set_dist_env():
 
 def main(_):
     tf.logging.set_verbosity(tf.logging.INFO)
-    # set_dist_env()
+    set_dist_env()
     #------bulid Tasks------
     model_params = {
         "learning_rate": FLAGS.learning_rate,
