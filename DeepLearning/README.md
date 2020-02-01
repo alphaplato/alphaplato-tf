@@ -8,7 +8,7 @@
 * PNN
 * XDeepFM
 
-#### 2、深度模型算法
+#### 2、DIN/DIEN算法
 * DIN 
 * DIEN
 
