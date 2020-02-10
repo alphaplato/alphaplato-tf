@@ -30,7 +30,7 @@
 ##### 3）集群模式：
 增加--dist_mode=2，执行 sh demo.sh 
 
-#### docker下的使用说明
+#### 3、docker下的使用说明
 
 
 如果在docker下使用，首先执行如下命令：
