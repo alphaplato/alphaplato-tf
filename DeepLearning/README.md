@@ -30,6 +30,16 @@ demo使用说明见：
 ##### 3）集群模式：
 增加--dist_mode=2，执行 sh demo.sh 
 
+#### docker下的使用说明
+
+如果在docker下使用，首先执行如下命令：
+
+> docker container run -p 0.0.0.0:6006:6006 -it -v $PWD:/tmp -w /tmp tensorflow/tensorflow:1.15.2-py3 bash
+
+* -p: Tensorboard will be served in our browser on port of localhost:6006
+* -v -w: The directory of docker will be loaded on the directory of localhost (-v hostDir:containerDir -w workDir)
+
+
 ### 二、数据集来源
 
 预测收入的数据集，来源于[kaggle](https://www.kaggle.com/wenruliu/adult-income-dataset/data)。
