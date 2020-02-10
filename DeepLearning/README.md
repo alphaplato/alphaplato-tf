@@ -16,7 +16,7 @@
 
 **打包成package，可将不同算法文件文件下的重复文件保存为一份。**
 
-demo使用说明见：
+### 二、demo使用
 #### 1、执行 python3.7 csv_to_tfrecord.py
 #### 2、执行训练程序 
 ##### 1) 单机模式：
@@ -32,6 +32,7 @@ demo使用说明见：
 
 #### docker下的使用说明
 
+
 如果在docker下使用，首先执行如下命令：
 
 > docker container run -p 0.0.0.0:6006:6006 -it -v $PWD:/tmp -w /tmp tensorflow/tensorflow:1.15.2-py3 bash
@@ -40,7 +41,7 @@ demo使用说明见：
 * -v -w: The directory of docker will be loaded on the directory of localhost (-v hostDir:containerDir -w workDir)
 
 
-### 二、数据集来源
+### 三、数据集来源
 
 预测收入的数据集，来源于[kaggle](https://www.kaggle.com/wenruliu/adult-income-dataset/data)。
 
