@@ -9,6 +9,7 @@ class FeatureGenerator(object):
     def __init__(self,feature_json):
         self._feature_json = feature_json
         self._feature_generate()
+        self._feature_specify()
 
     def _feature_generate(self):
         feature_columns = {}
@@ -44,3 +45,13 @@ class FeatureGenerator(object):
                 deep_feature_columns[fea['feature_name']] = tf.feature_column.embedding_column(x_feature,dimension=fea['embedding'])
         feature_columns['deep'] = deep_feature_columns
         self.feature_columns = feature_columns
+
+    def _feature_specify(self):
+        feature_spec = {}
+        for fea in self._feature_json['features']:
+            if fea['value_type'] == 'Double':
+                feature_spec[fea['feature_name']] = tf.FixedLenFeature(shape=[1],dtype=tf.float32)
+            elif fea['value_type'] == 'String':
+                feature_spec[fea['feature_name']] = tf.VarLenFeature(tf.string)
+        feature_spec['label'] = tf.FixedLenFeature(shape=[1],dtype=tf.int64)
+        self.feature_spec = feature_spec
