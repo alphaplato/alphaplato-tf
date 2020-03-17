@@ -119,12 +119,19 @@ def main(_):
         eval_spec = tf.estimator.EvalSpec(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), steps=None, start_delay_secs=1000, throttle_secs=1200)
         tf.estimator.train_and_evaluate(Estimator, train_spec, eval_spec)
     elif FLAGS.task_type == 'eval':
-        model.evaluate(input_fn=lambda: model.input_fn(tr_files, num_epochs=1, batch_size=FLAGS.batch_size))
-        model.evaluate(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size))
+        Estimator.evaluate(input_fn=lambda: model.input_fn(tr_files, num_epochs=1, batch_size=FLAGS.batch_size))
+        Estimator.evaluate(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size))
     elif FLAGS.task_type == 'infer':
         preds = Estimator.predict(input_fn=lambda: input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), predict_keys="prob")
 ##单机使用保存
-    serving_input_receiver_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(fg.feature_spec)
+    # print(fg.feature_spec)
+    # serving_input_receiver_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(fg.feature_spec)
+
+    print(fg.feature_placeholders)
+    serving_input_receiver_fn = (
+        tf.estimator.export.build_raw_serving_input_receiver_fn(fg.feature_placeholders)
+    )
+
     Estimator.export_saved_model(FLAGS.servable_model_dir, serving_input_receiver_fn)
 
 
