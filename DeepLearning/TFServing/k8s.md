@@ -6,7 +6,7 @@ k8s的测试部署主要提供给算法团队、工程团队或者是运维团�
 首先启动k8s(已有集群可忽略)
 > kind create cluster --name Janus 
 
-按照以下步骤进行部署：
+按照以下步骤进行部署：  
 1、生成镜像  
 - docker run -d --name serving_base tensorflow/serving
 - docker cp model serving_base:/models/deepfm
