@@ -122,7 +122,7 @@ def main(_):
         Estimator.evaluate(input_fn=lambda: model.input_fn(tr_files, num_epochs=1, batch_size=FLAGS.batch_size))
         Estimator.evaluate(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size))
     elif FLAGS.task_type == 'infer':
-        preds = Estimator.predict(input_fn=lambda: input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), predict_keys="prob")
+        preds = Estimator.predict(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), predict_keys="prob")
 ##单机使用保存
     # print(fg.feature_spec)
     # serving_input_receiver_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(fg.feature_spec)

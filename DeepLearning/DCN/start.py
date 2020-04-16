@@ -120,17 +120,17 @@ def main(_):
 
     config = tf.estimator.RunConfig().replace(session_config = tf.ConfigProto(device_count={'GPU':0, 'CPU':FLAGS.num_threads}),
             log_step_count_steps=FLAGS.log_steps, save_summary_steps=FLAGS.log_steps)
-    EST = tf.estimator.Estimator(model_fn=model.model_fn, model_dir='./model/', params=model_params, config=config)
+    Estimator = tf.estimator.Estimator(model_fn=model.model_fn, model_dir='./model/', params=model_params, config=config)
 
     if FLAGS.task_type == 'train':
         train_spec = tf.estimator.TrainSpec(input_fn=lambda: model.input_fn(tr_files, num_epochs=FLAGS.num_epochs, batch_size=FLAGS.batch_size))
         eval_spec = tf.estimator.EvalSpec(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), steps=None, start_delay_secs=1000, throttle_secs=1200)
-        tf.estimator.train_and_evaluate(EST, train_spec, eval_spec)
+        tf.estimator.train_and_evaluate(Estimator, train_spec, eval_spec)
     elif FLAGS.task_type == 'eval':
-        model.evaluate(input_fn=lambda: model.input_fn(tr_files, num_epochs=1, batch_size=FLAGS.batch_size))
-        model.evaluate(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size))
+        Estimator.evaluate(input_fn=lambda: model.input_fn(tr_files, num_epochs=1, batch_size=FLAGS.batch_size))
+        Estimator.evaluate(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size))
     elif FLAGS.task_type == 'infer':
-        preds = Estimator.predict(input_fn=lambda: input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), predict_keys="prob")
+        preds = Estimator.predict(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), predict_keys="prob")
     #     with open(FLAGS.data_dir+"/pred.txt", "w") as fo:
     #         for prob in preds:
     #             fo.write("%f\n" % (prob['prob']))
