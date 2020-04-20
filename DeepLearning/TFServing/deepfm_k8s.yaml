@@ -1,0 +1,51 @@
+# author: plato.sg.lee@gmail.com
+# desc: hdfs+TF serving test
+# namespace: ktservertest
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tfserving-deployment
+  namespace: ktservertest
+spec:
+  selector:
+    matchLabels:
+      app: deepfm-server
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: deepfm-server
+    spec:
+      containers:
+      - name: deepfm-container
+        image: ccr.ccs.tencentyun.com/sd_rec/tensorflow:tf-serving-hdfs
+        ports:
+        - containerPort: 8500
+        - containerPort: 9000
+        env:
+        - name: MODEL_NAME
+          value: deepfm
+        - name: MODEL_BASE_PATH
+          value: hdfs://172.16.32.15:4007/export/shidian/rec/sort/models
+      imagePullSecrets:
+      - name: tencent-repo
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: deepfm-service 
+  name: deepfm-service
+  namespace: ktservertest
+spec:
+  ports:
+  - name: rest-api-port
+    port: 9000
+    targetPort: 9000
+  - name: grpc-port
+    port: 8500
+    targetPort: 8500
+  selector:
+    app: deepfm-server 
+  type: NodePort
