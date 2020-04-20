@@ -42,8 +42,8 @@ k8s的测试部署主要提供给算法团队、工程团队或者是运维团�
 ### 3.2 正式部署
 假设从头开始生成镜像，基于k8s部署，并集成hdfs的访问路径。
 #### 3.2.1 生成镜像
-- A 测试hdfs镜像
-* * 参照以下内容构建dockerfile，注意内部包含的java和hadoop需要提前准备好。
+##### A 测试hdfs镜像
+* 参照以下内容构建dockerfile，注意内部包含的java和hadoop需要提前准备好。
 
 > MAINTAINER lishuguang@sdiread.com
 
@@ -58,13 +58,13 @@ k8s的测试部署主要提供给算法团队、工程团队或者是运维团�
 
 > ENTRYPOINT ["bash"]
 
-* * docker build -t tensorflow_serving:1.14-hadoop-test .
-* * docker run -it --rm tensorflow_serving:1.14-hadoop
-* * 检测是否能够和目标hdfs系统正常通信，比如采用常用的ls等命令测试，修复响应问题
-- B 生成tensorflow serving镜像
+* docker build -t tensorflow_serving:1.14-hadoop-test .
+* docker run -it --rm tensorflow_serving:1.14-hadoop
+* 检测是否能够和目标hdfs系统正常通信，比如采用常用的ls等命令测试，修复响应问题
+##### B 生成tensorflow serving镜像
 
-* * 构建dockerfile(本路径下)，注意内部包含的java和hadoop需要提前准备好。
-* * docker build -t tensorflow/serving:tf-serving-hdfs .
+* 构建dockerfile(本路径下)，注意内部包含的java和hadoop需要提前准备好。
+* docker build -t tensorflow/serving:tf-serving-hdfs .
 #### 3.2.2 测试镜像
 - docker run -p 9000:9000 -p 8500:8500 --name=test -e MODEL_NAME=deepfm -e MODEL_BASE_PATH=hdfs://172.16.32.15:4007/export/shidian/rec/sort/models -it tensorflow/serving:tf-serving-hdfs
 - grpc测试： sh run_in_docker.sh python3 deepfm_client_grpc.py --server=localhost:8500
@@ -74,9 +74,9 @@ k8s的测试部署主要提供给算法团队、工程团队或者是运维团�
 - docker push ccr.ccs.tencentyun.com/sd_rec/tensorflow:tf-serving-hdfs
 #### 3.2.4 k8s部署
 - kubectl create -f deepfm_k8s.yaml
-- 部署测试
-* * grpc测试： sh run_in_docker.sh python3 deepfm_client_grpc.py --server=k8s_ip:8500
-* * rest api 测试： sh run_in_docker.sh python3 deepfm_client.py  --server= k8s_ip:9000
+##### 部署测试
+* grpc测试： sh run_in_docker.sh python3 deepfm_client_grpc.py --server=k8s_ip:8500
+* rest api 测试： sh run_in_docker.sh python3 deepfm_client.py  --server= k8s_ip:9000
 
 ## 四 备注
 该服务目前只服务单模型，通常情况下改变模型需要新的部署。serving支持多模型并存，可通过配置文件实现，本文档视后续线上使用情况再做补充。
