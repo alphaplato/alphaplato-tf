@@ -75,8 +75,8 @@ k8s的测试部署主要提供给算法团队、工程团队或者是运维团�
 #### 3.2.4 k8s部署
 - kubectl create -f deepfm_k8s.yaml
 ##### 部署测试
-* grpc测试： sh run_in_docker.sh python3 deepfm_client_grpc.py --server=k8s_ip:8500
-* rest api 测试： sh run_in_docker.sh python3 deepfm_client.py  --server= k8s_ip:9000
+* grpc测试： sh run_in_docker.sh python3 deepfm_client_grpc.py --server=$k8s_ip:8500
+* rest api 测试： sh run_in_docker.sh python3 deepfm_client.py  --server= $k8s_ip:9000
 
 ## 四 备注
 该服务目前只服务单模型，通常情况下改变模型需要新的部署。serving支持多模型并存，可通过配置文件实现，本文档视后续线上使用情况再做补充。
