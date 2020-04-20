@@ -19,5 +19,4 @@ CLASSPATH=$(${HADOOP_HOME}/bin/hadoop classpath --glob) tensorflow_model_server 
 EXPOSE 8500
 EXPOSE 9000
 
-ENTRYPOINT ["bash"]
 ENTRYPOINT ["/usr/bin/tf_serving_entrypoint.sh"]
