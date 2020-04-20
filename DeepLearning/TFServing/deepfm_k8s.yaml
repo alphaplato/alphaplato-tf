@@ -26,7 +26,7 @@ spec:
         - name: MODEL_NAME
           value: deepfm
         - name: MODEL_BASE_PATH
-          value: hdfs://172.16.32.15:4007/export/shidian/rec/sort/models
+          value: hdfs://$ip:$port/export/models
       imagePullSecrets:
       - name: tencent-repo
 

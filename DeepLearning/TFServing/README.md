@@ -66,7 +66,7 @@ k8s的测试部署主要提供给算法团队、工程团队或者是运维团�
 * 构建dockerfile(本路径下)，注意内部包含的java和hadoop需要提前准备好。
 * docker build -t tensorflow/serving:tf-serving-hdfs .
 #### 3.2.2 测试镜像
-- docker run -p 9000:9000 -p 8500:8500 --name=test -e MODEL_NAME=deepfm -e MODEL_BASE_PATH=hdfs://172.16.32.15:4007/export/shidian/rec/sort/models -it tensorflow/serving:tf-serving-hdfs
+- docker run -p 9000:9000 -p 8500:8500 --name=test -e MODEL_NAME=deepfm -e MODEL_BASE_PATH=hdfs://$ip:$port/export/models -it tensorflow/serving:tf-serving-hdfs
 - grpc测试： sh run_in_docker.sh python3 deepfm_client_grpc.py --server=localhost:8500
 - rest api 测试： sh run_in_docker.sh python3 deepfm_client.py  --server=localhost:9000
 #### 3.2.3 上传镜像(以腾讯云为例)
