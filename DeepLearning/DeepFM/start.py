@@ -127,7 +127,6 @@ def main(_):
     # print(fg.feature_spec)
     # serving_input_receiver_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(fg.feature_spec)
 
-    print(fg.feature_placeholders)
     serving_input_receiver_fn = (
         tf.estimator.export.build_raw_serving_input_receiver_fn(fg.feature_placeholders)
     )

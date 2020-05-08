@@ -131,17 +131,15 @@ def main(_):
         Estimator.evaluate(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size))
     elif FLAGS.task_type == 'infer':
         preds = Estimator.predict(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), predict_keys="prob")
-    #     with open(FLAGS.data_dir+"/pred.txt", "w") as fo:
-    #         for prob in preds:
-    #             fo.write("%f\n" % (prob['prob']))
-    #                 elif FLAGS.task_type == 'export':
-        # feature_spec = {
-        #     'feat_ids': tf.placeholder(dtype=tf.int64, shape=[None, FLAGS.field_size], name='feat_ids'),
-        #     'feat_vals': tf.placeholder(dtype=tf.float32, shape=[None, FLAGS.field_size], name='feat_vals')
-        # }
-        # serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec)
-        # Estimator.export_savedmodel(FLAGS.servable_model_dir, serving_input_receiver_fn)
+    ##单机使用保存
+    # print(fg.feature_spec)
+    # serving_input_receiver_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(fg.feature_spec)
 
+    serving_input_receiver_fn = (
+        tf.estimator.export.build_raw_serving_input_receiver_fn(fg.feature_placeholders)
+    )
+
+    Estimator.export_saved_model(FLAGS.servable_model_dir, serving_input_receiver_fn)
 
 if __name__=='__main__':
     tf.logging.set_verbosity(tf.logging.INFO)
