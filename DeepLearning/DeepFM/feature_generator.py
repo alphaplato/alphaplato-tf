@@ -10,6 +10,7 @@ class FeatureGenerator(object):
         self._feature_json = feature_json
         self._feature_generate()
         self._feature_specify()
+        self._feature_holder()
 
     def _feature_generate(self):
         feature_columns = {}
@@ -37,18 +38,14 @@ class FeatureGenerator(object):
         feature_columns['fm'] = fm_feature_columns       
         #deepfm deep feature columns process
         deep_feature_columns = {}
-        feature_placeholders = {} # 支持build_raw_serving_input_receiver_fn（原始数据输入serving）使用
         for fea in self._feature_json['features']:
             if fea['feature_type'] == 'raw':
                 deep_feature_columns[fea['feature_name']] = tf.feature_column.numeric_column(fea['feature_name'])
-                feature_placeholders[fea['feature_name']] =  tf.placeholder(tf.float32,[1],name=fea['feature_name'])
             elif fea['feature_type'] == 'id':
                 x_feature = tf.feature_column.categorical_column_with_hash_bucket(fea['feature_name'],hash_bucket_size=fea['hash_size'])
                 deep_feature_columns[fea['feature_name']] = tf.feature_column.embedding_column(x_feature,dimension=fea['embedding'])
-                feature_placeholders[fea['feature_name']] =  tf.placeholder(tf.string,[1],name=fea['feature_name'])
         feature_columns['deep'] = deep_feature_columns
         self.feature_columns = feature_columns
-        self.feature_placeholders = feature_placeholders
 
     def _feature_specify(self):
         feature_spec = {}
@@ -59,3 +56,12 @@ class FeatureGenerator(object):
                 feature_spec[fea['feature_name']] = tf.VarLenFeature(tf.string)
         feature_spec['label'] = tf.FixedLenFeature(shape=[1],dtype=tf.int64)
         self.feature_spec = feature_spec
+
+    def _feature_holder(self):
+        feature_placeholders = {} # 支持build_raw_serving_input_receiver_fn（原始数据输入serving）使用
+        for fea in self._feature_json['features']:
+            if fea['feature_type'] == 'raw':
+                feature_placeholders[fea['feature_name']] =  tf.placeholder(tf.float32,[1],name=fea['feature_name'])
+            elif fea['feature_type'] == 'id':
+                feature_placeholders[fea['feature_name']] =  tf.placeholder(tf.string,[1],name=fea['feature_name'])
+        self.feature_placeholders = feature_placeholders

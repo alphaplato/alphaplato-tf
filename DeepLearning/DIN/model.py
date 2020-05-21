@@ -14,15 +14,9 @@ class Model(object):
         self.md = md
 
     def _parser(self,record):
-        fea_dict = {}
-        for fea in self.fg._feature_json['features']:
-            if fea['value_type'] == 'Double':
-                fea_dict[fea['feature_name']] = tf.FixedLenFeature(shape=[1],dtype=tf.float32)
-            elif fea['value_type'] == 'String':
-                fea_dict[fea['feature_name']] = tf.VarLenFeature(tf.string)
-        fea_dict['label'] = tf.FixedLenFeature(shape=[1],dtype=tf.int64)
-        features = tf.parse_single_example(record, fea_dict)
-        label =  features.pop('label')
+        feature_spec = self.fg.feature_spec
+        features = tf.parse_single_example(record, feature_spec)
+        label = features.pop('label')
         return features,label
 
     def input_fn(self,data_path,mode=tf.estimator.ModeKeys.TRAIN,batch_size=1,num_epochs=1):
@@ -37,19 +31,16 @@ class Model(object):
         learning_rate = params['learning_rate']
 
         y_out = self.md.build_logits(features,mode,params)
-        
-        labels = tf.cast(labels,tf.float32)
-        pred = tf.sigmoid(y_out) 
-
+        pred = tf.sigmoid(y_out)     
         predictions={"prob": pred}
+        export_outputs = {tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: tf.estimator.export.PredictOutput(predictions)}   
         if mode == tf.estimator.ModeKeys.PREDICT:
             return tf.estimator.EstimatorSpec(
                 mode=mode,
                 predictions=predictions,
-                export_outputs=export_outputs)
-
-        export_outputs = {tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: tf.estimator.export.PredictOutput(predictions)}            
+                export_outputs=export_outputs)     
         
+        labels = tf.cast(labels,tf.float32)
         loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) + \
             tf.losses.get_regularization_loss()
         eval_metric_ops = {
