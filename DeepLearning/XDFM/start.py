@@ -35,7 +35,7 @@ tf.app.flags.DEFINE_string("dropout", '0.7,0.7,0.5', "dropout rate")
 tf.app.flags.DEFINE_string("data_dir", '', "data dir")
 tf.app.flags.DEFINE_string("dt_dir", '', "data dt partition")
 tf.app.flags.DEFINE_string("model_dir", '', "model check point dir")
-tf.app.flags.DEFINE_string("servable_model_dir", '', "export servable model for TensorFlow Serving")
+tf.app.flags.DEFINE_string("servable_model_dir", 'export', "export servable model for TensorFlow Serving")
 tf.app.flags.DEFINE_string("task_type", 'train', "task type {train, infer, eval, export}")
 tf.app.flags.DEFINE_boolean("clear_existing_model", False, "clear existing model or not")
 

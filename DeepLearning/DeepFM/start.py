@@ -101,6 +101,14 @@ def main(_):
         "optimizer":FLAGS.optimizer
     }   
 
+    if FLAGS.clear_existing_model:
+        try:
+            shutil.rmtree('./model')
+        except Exception as e:
+            print(e, "at clear_existing_model")
+        else:
+            print("existing model cleaned at %s" % FLAGS.model_dir)  
+
     tr_files = "./data/train.tfrecords"
     va_files ="./data/test.tfrecords"
 
