@@ -131,15 +131,15 @@ def main(_):
         Estimator.evaluate(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size))
     elif FLAGS.task_type == 'infer':
         preds = Estimator.predict(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), predict_keys="prob")
-    ##单机使用保存
-    # print(fg.feature_spec)
-    # serving_input_receiver_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(fg.feature_spec)
+    elif FLAGS.task_type == 'export':
+        ##单机使用保存
+        # print(fg.feature_spec)
+        # serving_input_receiver_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(fg.feature_spec)
+        serving_input_receiver_fn = (
+            tf.estimator.export.build_raw_serving_input_receiver_fn(fg.feature_placeholders)
+        )
 
-    serving_input_receiver_fn = (
-        tf.estimator.export.build_raw_serving_input_receiver_fn(fg.feature_placeholders)
-    )
-
-    Estimator.export_saved_model(FLAGS.servable_model_dir, serving_input_receiver_fn)
+        Estimator.export_saved_model(FLAGS.servable_model_dir, serving_input_receiver_fn)
 
 if __name__=='__main__':
     tf.logging.set_verbosity(tf.logging.INFO)
