@@ -19,7 +19,7 @@ class Model(object):
         label = features.pop('label')
         return features,label
 
-    def input_fn(self,data_path,mode=tf.estimator.ModeKeys.TRAIN,batch_size=1,num_epochs=1):
+    def input_fn(self,data_path,batch_size=1,num_epochs=1):
         num_threads = multiprocessing.cpu_count() if MULTI_THREADING else 1
         dataset = tf.data.TFRecordDataset(data_path,num_parallel_reads=num_threads)
         dataset = dataset.map(self._parser).repeat(num_epochs).batch(batch_size)
