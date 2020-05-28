@@ -41,4 +41,6 @@ class FeatureGenerator(object):
                 feature_placeholders[fea['feature_name']] =  tf.placeholder(tf.float32,[1],name=fea['feature_name'])
             elif fea['feature_type'] == 'id':
                 feature_placeholders[fea['feature_name']] =  tf.placeholder(tf.string,[1],name=fea['feature_name'])
+            elif fea['feature_type'] == 'list':
+                feature_placeholders[fea['feature_name']] =  tf.placeholder(tf.string,[1,None],name=fea['feature_name'])
         self.feature_placeholders = feature_placeholders
