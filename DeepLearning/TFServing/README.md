@@ -45,7 +45,7 @@ k8s的测试部署主要提供给算法团队、工程团队或者是运维团�
 ##### A 测试hdfs镜像
 * 参照以下内容构建dockerfile，注意内部包含的java和hadoop需要提前准备好。
 
-> MAINTAINER lishuguang@sdiread.com
+> MAINTAINER plato.sg.lee@gmail.com
 
 > FROM ubuntu:16.04
 
