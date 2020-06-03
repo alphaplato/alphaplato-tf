@@ -17,7 +17,7 @@
 **打包成package，可将不同算法文件文件下的重复文件保存为一份。**
 
 ### 二、demo使用
-#### 1、执行 python3.7 csv_to_tfrecord.py
+#### 1、执行 python3 csv_to_tfrecord.py
 #### 2、执行训练程序 
 ##### 1) 单机模式：
 去掉--dist_mode参数,执行 sh demo.sh 
