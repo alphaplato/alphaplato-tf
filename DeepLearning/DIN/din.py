@@ -47,6 +47,7 @@ class DIN(object):
             with tf.variable_scope("attention"):
                 item_id = tf.feature_column.input_layer(features,feature_columns['item_id'])
                 item_cat = tf.feature_column.input_layer(features,feature_columns['item_cat'])
+                #输出batch的embedings和batch内单个序列长度组成的list
                 item_id_list,item_id_list_len = tf.contrib.feature_column.sequence_input_layer(features,feature_columns['item_list'])
                 item_cat_list,item_cat_list_len = tf.contrib.feature_column.sequence_input_layer(features,feature_columns['item_cat_list'])
                 with tf.variable_scope("attention-id"):
