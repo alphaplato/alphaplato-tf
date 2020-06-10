@@ -34,16 +34,6 @@
             "value_type":"String",
             "hash_size":1600,
             "embedding":16
-        },
-        {
-            "feature_name":"cat_neg_list",
-            "feature_type":"share",
-            "target":"item_cat_list"
-        },
-        {
-            "feature_name":"item_neg_list",
-            "feature_type":"share",
-            "target":"item_list"
         }
     ],
     "label":[
