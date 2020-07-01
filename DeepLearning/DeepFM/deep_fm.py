@@ -11,12 +11,12 @@ class DeepFM(object):
         self._model_name = 'DeepFM'
         self._fg = fg
 
-    def build_logits(self,features,mode,params):
-        feature_columns = self._fg.feature_columns
+    def build_logits(self,features,labels,mode,params):
         layers = params['deep_layers']
         dropout = params['dropout']
         l2_reg = params['l2_reg']
 
+        feature_columns = self._fg.feature_columns
         with tf.variable_scope("deepfm"):
             with tf.variable_scope("lr-part"):
                 lr_feature_columns = [feature_columns['lr'][feature_name] for feature_name in feature_columns['lr']]
@@ -67,8 +67,10 @@ class DeepFM(object):
                         deep_input = tf.layers.batch_normalization(deep_input,training = False)
                 deep_out = tf.layers.dense(deep_input,1) # 注意：输出层使用线性激活函数！！！！
             
-            y_input = tf.concat([fm_out,deep_out],axis=1)
-            # y_input = tf.concat([lr_out,fm_out,deep_out],axis=1)
-            y_out = tf.layers.dense(y_input,1)
+                y_input = tf.concat([fm_out,deep_out],axis=1)
+                y_out = tf.layers.dense(y_input,1)
 
-            return  y_out
+            prob = tf.sigmoid(y_out)
+            loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) + tf.losses.get_regularization_loss()
+
+        return {"prob":prob,"loss":loss}

@@ -45,4 +45,7 @@ class DCN(object):
             y_input = tf.concat([dnn_input,xl],axis=1)
             y_out = tf.layers.dense(xl,1)
 
-            return  y_out
+            prob = tf.sigmoid(y_out)
+            loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) + tf.losses.get_regularization_loss()
+
+        return {"prob":prob,"loss":loss}

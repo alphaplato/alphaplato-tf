@@ -21,7 +21,7 @@ class Model(object):
 
     def input_fn(self,data_path,batch_size=1,num_epochs=1):
         num_threads = multiprocessing.cpu_count() if MULTI_THREADING else 1
-        dataset = tf.data.TFRecordDataset(data_path,num_parallel_reads=num_threads)
+        dataset = tf.data.TFRecordDataset(data_path,num_parallel_reads=num_threads,compression_type='GZIP')
         dataset = dataset.map(self._parser).repeat(num_epochs).batch(batch_size)
         features,label = dataset.make_one_shot_iterator().get_next()
         return features,label
@@ -30,22 +30,23 @@ class Model(object):
         optimizer = params['optimizer'] 
         learning_rate = params['learning_rate']
 
-        y_out = self.md.build_logits(features,mode,params)
-        pred = tf.sigmoid(y_out)     
-        predictions={"prob": pred}
+        output = self.md.build_logits(features,labels,mode,params)
+
+        prob = output["prob"]
+        predictions={"prob": prob}
+    
         export_outputs = {tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: tf.estimator.export.PredictOutput(predictions)}   
         if mode == tf.estimator.ModeKeys.PREDICT:
             return tf.estimator.EstimatorSpec(
                 mode=mode,
                 predictions=predictions,
                 export_outputs=export_outputs)     
-        
-        labels = tf.cast(labels,tf.float32)
-        loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) + \
-            tf.losses.get_regularization_loss()
+
         eval_metric_ops = {
-            "auc": tf.metrics.auc(labels, pred)
+            "auc": tf.metrics.auc(labels, prob)
             }
+
+        loss = output["loss"]
         if mode == tf.estimator.ModeKeys.EVAL:
             return tf.estimator.EstimatorSpec(
                 mode=mode,

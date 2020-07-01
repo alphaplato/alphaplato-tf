@@ -14,14 +14,8 @@ class Model(object):
         self.md = md
 
     def _parser(self,record):
-        features = {}
-        for fea in self.fg._feature_json['features']:
-            if fea['feature_type'] == 'id':
-                features[fea['feature_name']] = tf.FixedLenFeature(shape=[1],dtype=tf.string)
-            elif fea['feature_type'] == 'list':
-                features[fea['feature_name']] = tf.VarLenFeature(dtype=tf.string)
-        features['label'] = tf.FixedLenFeature(shape=[1],dtype=tf.float32,)
-        features = tf.parse_single_example(record, features)
+        feature_spec = self.fg.feature_spec
+        features = tf.parse_single_example(record, feature_spec)
         label = features.pop('label')
         return features,label
 
@@ -36,11 +30,14 @@ class Model(object):
         features,label = dataset.make_one_shot_iterator().get_next()
         return features,label
 
-    def model_fn(self,features,labels,mode,params): 
-        output = self.md.build_logits(features,labels,params,mode)
+    def model_fn(self,features,labels,mode,params):
+        optimizer = params['optimizer'] 
+        learning_rate = params['learning_rate']
 
+        output = self.md.build_logits(features,labels,params,mode)
         prob = output["prob"]
         predictions={"prob": prob}
+
         if mode == tf.estimator.ModeKeys.PREDICT:
             return tf.estimator.EstimatorSpec(
                 mode=mode,
@@ -61,7 +58,14 @@ class Model(object):
                 loss=loss,
                 eval_metric_ops=eval_metric_ops)
 
-        optimizer = tf.train.AdamOptimizer(learning_rate=0.0005, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        if optimizer == 'Adam':
+            optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, beta1=0.9, beta2=0.999, epsilon=1e-8)
+        elif optimizer == 'Adagrad':
+            optimizer = tf.train.AdagradOptimizer(learning_rate=learning_rate, initial_accumulator_value=1e-8)
+        elif optimizer == 'Momentum':
+            optimizer = tf.train.MomentumOptimizer(learning_rate=learning_rate, momentum=0.95)
+        elif optimizer == 'ftrl':
+            optimizer = tf.train.FtrlOptimizer(learning_rate)
 
         train_op = optimizer.minimize(loss, global_step=tf.train.get_global_step())
 

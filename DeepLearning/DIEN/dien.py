@@ -149,7 +149,7 @@ class DIEN(object):
                 item_inputs,item_inputs_len = tf.contrib.feature_column.sequence_input_layer(features,[feature_columns['item_list'],feature_columns['item_cat_list']])
                 gru_item_outputs, gru_item_last_states=self._gru_rnn(item_inputs,item_inputs_len)
                 item_outputs, item_last_states=self._augru_rnn(item_input,gru_item_outputs,item_inputs_len,params)
-            att_ouputs = tf.concat([user_id,item_input,item_last_states],1)
+                att_ouputs = tf.concat([user_id,item_input,item_last_states],1)
 
 
             with tf.variable_scope("fcn-net"):
@@ -162,8 +162,8 @@ class DIEN(object):
                     else:
                         deep_input = tf.layers.batch_normalization(deep_input,training = False)
             
-            y_out = tf.layers.dense(deep_input,1)
-            mian_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) 
+                y_out = tf.layers.dense(deep_input,1)
+                mian_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) 
 
             with tf.variable_scope("aux-loss"):
                 features_neg = self._neg_sampling(features['item_list'],mid_cat,neg_count)
