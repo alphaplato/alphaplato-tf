@@ -11,7 +11,7 @@ class DIN(object):
         self._model_name = 'DIN'
         self._fg = fg
 
-    def attention(self,queries,keys,keys_length,params):
+    def _attention(self,queries,keys,keys_length,params):
         atten_layers = params['atten_layers']
         keys_shape = tf.shape(keys)
         queries = tf.tile(queries,[1,keys_shape[1]])
@@ -45,16 +45,13 @@ class DIN(object):
 
         with tf.variable_scope("din"):
             with tf.variable_scope("attention"):
-                item_id = tf.feature_column.input_layer(features,feature_columns['item_id'])
-                item_cat = tf.feature_column.input_layer(features,feature_columns['item_cat'])
+                user_id = tf.feature_column.input_layer(features,feature_columns['user_id'])
+                item_input = tf.feature_column.input_layer(features,[feature_columns['item_id'],feature_columns['item_cat']])
                 #输出batch的embedings和batch内单个序列长度组成的list
-                item_id_list,item_id_list_len = tf.contrib.feature_column.sequence_input_layer(features,feature_columns['item_list'])
-                item_cat_list,item_cat_list_len = tf.contrib.feature_column.sequence_input_layer(features,feature_columns['item_cat_list'])
-                with tf.variable_scope("attention-id"):
-                    att_item_id = self.attention(item_id,item_id_list,item_id_list_len,params)
-                with tf.variable_scope("attention-cat"):    
-                    att_item_cat = self.attention(item_cat,item_cat_list,item_cat_list_len,params)
-                att_concat = tf.concat([item_id,item_cat,att_item_id,att_item_cat],1)
+                item_input_list,item_input_list_len = tf.contrib.feature_column.sequence_input_layer(features,[feature_columns['item_list'],feature_columns['item_cat_list']])
+                with tf.variable_scope("attention-net"):
+                    att_item_out = self._attention(item_input,item_input_list,item_input_list_len,params)
+                att_concat = tf.concat([user_id,item_input,att_item_out],1)
 
             with tf.variable_scope("deep-net"):
                 for i in range(len(layers)):
@@ -70,5 +67,3 @@ class DIN(object):
             loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) + tf.losses.get_regularization_loss()
 
         return {"prob":prob,"loss":loss}
-
-            return  y_out
