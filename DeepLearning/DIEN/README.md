@@ -1,8 +1,8 @@
-# DIN
+# DIEN
 
 ## 1、网络结构
 
-![din structure](https://github.com/alphaplato/alphaplato/blob/master/image/DeepLearning/dien.png)
+![dien structure](https://github.com/alphaplato/alphaplato/blob/master/image/DeepLearning/dien.png)
 
 ## 2、实现要点
 
