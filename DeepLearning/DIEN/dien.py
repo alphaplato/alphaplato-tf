@@ -143,13 +143,13 @@ class DIEN(object):
         mid_cat = params['mid_cat']
 
         with tf.variable_scope("dien-net"):
-            user_id = tf.feature_column.input_layer(features,feature_columns['user_id'])
             with tf.variable_scope("attention-rnn"):
+                user_id = tf.feature_column.input_layer(features,feature_columns['user_id'])
                 item_input = tf.feature_column.input_layer(features,[feature_columns['item_id'],feature_columns['item_cat']])
                 item_inputs,item_inputs_len = tf.contrib.feature_column.sequence_input_layer(features,[feature_columns['item_list'],feature_columns['item_cat_list']])
                 gru_item_outputs, gru_item_last_states=self._gru_rnn(item_inputs,item_inputs_len)
                 item_outputs, item_last_states=self._augru_rnn(item_input,gru_item_outputs,item_inputs_len,params)
-            att_ouputs = tf.concat([user_id,item_input,item_last_states],1)
+                att_ouputs = tf.concat([user_id,item_input,item_last_states],1)
 
 
             with tf.variable_scope("fcn-net"):
@@ -162,11 +162,10 @@ class DIEN(object):
                     else:
                         deep_input = tf.layers.batch_normalization(deep_input,training = False)
             
-            y_out = tf.layers.dense(deep_input,1)
-            loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) 
+                y_out = tf.layers.dense(deep_input,1)
+                mian_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) 
 
-        with tf.variable_scope("aux-loss"):
-            if mode == tf.estimator.ModeKeys.TRAIN:
+            with tf.variable_scope("aux-loss"):
                 features_neg = self._neg_sampling(features['item_list'],mid_cat,neg_count)
                 item_neg_inputs,item_neg_inputs_len = tf.contrib.feature_column.sequence_input_layer(features_neg,[feature_columns['item_list'],feature_columns['item_cat_list']])
                 aux_pos_inputs = tf.concat([gru_item_outputs[:,:-1,:],item_inputs[:,1:,:]],axis=-1)
@@ -178,8 +177,9 @@ class DIEN(object):
                 aux_loss = (tf.reduce_sum(y_pos_loss) + 
                                 tf.reduce_sum(y_neg_loss))/tf.cast((tf.reduce_sum(pos_item_inputs_len) + 
                                 tf.reduce_sum(item_neg_inputs_len)),tf.float32)
-
-      
-            prob = tf.sigmoid(y_out)
-            loss = loss + aux_loss + tf.losses.get_regularization_loss()
-            return {"prob":prob,"loss":loss}
+                    
+            with tf.variable_scope("output"): 
+                prob = tf.sigmoid(y_out)
+                loss = mian_loss + aux_loss + tf.losses.get_regularization_loss()
+                
+        return {"prob":prob,"loss":loss}
