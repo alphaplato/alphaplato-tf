@@ -31,7 +31,7 @@ class FeatureGenerator(object):
                 feature_spec[fea['feature_name']] = tf.FixedLenFeature(shape=[1],dtype=tf.float32)
             elif fea['value_type'] == 'String':
                 feature_spec[fea['feature_name']] = tf.VarLenFeature(tf.string)
-        feature_spec['label'] = tf.FixedLenFeature(shape=[1],dtype=tf.int64)
+        feature_spec['label'] = tf.FixedLenFeature(shape=[1],dtype=tf.float32)
         self.feature_spec = feature_spec
 
     def _feature_holder(self):
