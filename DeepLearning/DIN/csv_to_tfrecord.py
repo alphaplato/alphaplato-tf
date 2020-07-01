@@ -33,7 +33,8 @@ class CsvTfrecord(object):
 
         csv = csv.values
         self._feature_json()
-        with tf.python_io.TFRecordWriter(self.fout_tfrecord) as writer:
+        options_gzip = tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)
+        with tf.python_io.TFRecordWriter(self.fout_tfrecord,options=options_gzip) as writer:
             for row in csv:
                 fea_dict = dict(zip(names,row))
                 feature = {}
@@ -42,7 +43,7 @@ class CsvTfrecord(object):
                         feature[fea['feature_name']] = tf.train.Feature(bytes_list=tf.train.BytesList(value=fea_dict[fea['feature_name']]))
                     elif fea['feature_type'] == 'id':
                         feature[fea['feature_name']] = tf.train.Feature(bytes_list=tf.train.BytesList(value=[str(fea_dict[fea['feature_name']]).encode()]))
-                feature['label'] = tf.train.Feature(int64_list=tf.train.Int64List(value=[fea_dict['label']]))
+                feature['label'] = tf.train.Feature(float_list=tf.train.FloatList(value=[fea_dict['label']]))
                 example = tf.train.Example(
                     features=tf.train.Features(feature=feature)
                 )
