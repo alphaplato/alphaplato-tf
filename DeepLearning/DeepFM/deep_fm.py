@@ -11,7 +11,7 @@ class DeepFM(object):
         self._model_name = 'DeepFM'
         self._fg = fg
 
-    def build_logits(self,features,labels,mode,params):
+    def build_logits(self,features,labels,params,mode=tf.estimator.ModeKeys.TRAIN):
         layers = params['deep_layers']
         dropout = params['dropout']
         l2_reg = params['l2_reg']

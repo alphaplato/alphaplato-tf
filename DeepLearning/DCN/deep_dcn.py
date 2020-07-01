@@ -10,7 +10,7 @@ class DCN(object):
         self._model_name = 'DCN'
         self._fg = fg
 
-    def build_logits(self,features,mode,params):
+    def build_logits(self,features,labels,params,mode=tf.estimator.ModeKeys.TRAIN):
         feature_columns = self._fg.feature_columns
         dnn_layers = params['deep_layers']
         dcn_layers = params['dcn_layers']
