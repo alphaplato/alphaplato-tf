@@ -108,9 +108,9 @@ class DIEN(object):
             y_loss = -tf.log(y_out)
         else:
             y_loss = -tf.log(1-y_out)
-        pos_padding = tf.zeros_like(y_out)
+        paddings = tf.ones_like(y_out) / (-2 ** 32 + 1) 
         mask = tf.sequence_mask(item_inputs_len,tf.shape(aux_input)[1])
-        mask_loss = tf.where(mask,y_loss,pos_padding)
+        mask_loss = tf.where(mask,y_loss,paddings)
         return mask_loss
 
 
@@ -127,7 +127,7 @@ class DIEN(object):
         
         att_scores = tf.squeeze(att_scores)
         key_masks = tf.sequence_mask(keys_length,keys_shape[1])
-        paddings = tf.ones_like(att_scores) * (-2 ** 32 + 1) 
+        paddings = tf.ones_like(att_scores) / (-2 ** 32 + 1) 
         att_scores = tf.where(key_masks,att_scores,paddings)
         att_scores = tf.nn.softmax(att_scores)
         att_scores = tf.expand_dims(att_scores,2)
