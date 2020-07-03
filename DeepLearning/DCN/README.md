@@ -12,3 +12,4 @@
 
 ## 参考文献：
 * [Deep & Cross Network for Ad Click Predictions](https://arxiv.org/pdf/1708.05123.pdf)
+* [数据集](https://archive.ics.uci.edu/ml/datasets/adult)

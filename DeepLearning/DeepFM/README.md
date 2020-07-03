@@ -14,3 +14,4 @@ deepfm实现主要由FM和DNN两部分构成，但将FM拆开实际上变成由L
 
 ## 参考文献：
 * [DeepFM: A Factorization-Machine based Neural Network for CTR Prediction](https://arxiv.org/pdf/1703.04247.pdf)
+* [数据集](https://archive.ics.uci.edu/ml/datasets/adult)

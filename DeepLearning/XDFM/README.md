@@ -17,3 +17,4 @@ ps:xdeepfm效果上是最好的，个人认为其理论也是所有这些FM升�
 ## 参考文献：
 * [xDeepFM: Combining Explicit and Implicit Feature Interactions
 for Recommender Systems](https://arxiv.org/pdf/1803.05170.pdf)
+* [数据集](https://archive.ics.uci.edu/ml/datasets/adult)

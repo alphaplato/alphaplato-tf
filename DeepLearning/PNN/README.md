@@ -12,3 +12,4 @@
 ## 参考文献：
 * [Product-based Neural Networks for User Response
 Prediction](https://arxiv.org/pdf/1611.00144.pdf)
+* [数据集](https://archive.ics.uci.edu/ml/datasets/adult)
