@@ -14,7 +14,7 @@
 
 * 计算复杂度高，因此train起来比较耗时。
 
-* 注意padding（补足）值不不取点。
+* 注意padding（补足）值不取零。
 
 ## 参考文献：
 * [Deep Interest Network for Click-Through Rate Prediction](https://arxiv.org/pdf/1706.06978.pdf)
