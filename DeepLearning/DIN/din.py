@@ -25,7 +25,7 @@ class DIN(object):
         
         din_weight = tf.squeeze(din_weight)
         key_masks = tf.sequence_mask(keys_length,keys_shape[1])
-        paddings = tf.ones_like(din_weight) / (-2 ** 32 + 1) 
+        paddings = tf.ones_like(din_weight) / (2 ** 32 - 1) 
         din_weight = tf.where(key_masks,din_weight,paddings)
         din_weight = tf.nn.softmax(din_weight)
         din_weight = tf.expand_dims(din_weight,2)
