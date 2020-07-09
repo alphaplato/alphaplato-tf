@@ -134,7 +134,7 @@ class DIEN(object):
 
         return att_scores
     
-    def build_logits(self,features,labels,params,mode=tf.estimator.ModeKeys.TRAIN):
+    def build_logits(self,features,params,mode=tf.estimator.ModeKeys.TRAIN):
         feature_columns = self._fg.feature_columns
         layers = params['fcn_layers']
         dropout = params['dropout']

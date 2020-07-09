@@ -10,7 +10,7 @@ class PNN(object):
         self._model_name = 'PNN'
         self._fg = fg
 
-    def build_logits(self,features,labels,params,mode=tf.estimator.ModeKeys.TRAIN):
+    def build_logits(self,features,params,mode=tf.estimator.ModeKeys.TRAIN):
         feature_columns = self._fg.feature_columns
         layers = params['deep_layers']
         dropout = params['dropout']
