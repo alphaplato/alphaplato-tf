@@ -30,7 +30,7 @@ class Model(object):
         optimizer = params['optimizer'] 
         learning_rate = params['learning_rate']
 
-        output = self.md.build_logits(ffeatures,labels,params,mode)
+        output = self.md.build_logits(features,labels,params,mode)
 
         prob = output["prob"]
         predictions={"prob": prob}
