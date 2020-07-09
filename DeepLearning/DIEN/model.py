@@ -38,14 +38,16 @@ class Model(object):
         prob = output["prob"]
         predictions={"prob": prob}
 
+        export_outputs = {
+            tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: tf.estimator.export.PredictOutput(predictions)
+            }
+        
         if mode == tf.estimator.ModeKeys.PREDICT:
             return tf.estimator.EstimatorSpec(
                 mode=mode,
                 predictions=predictions,
                 export_outputs=export_outputs)
 
-        export_outputs = {tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: tf.estimator.export.PredictOutput(predictions)}            
-        
         eval_metric_ops = {
             "auc": tf.metrics.auc(labels, prob)
             }

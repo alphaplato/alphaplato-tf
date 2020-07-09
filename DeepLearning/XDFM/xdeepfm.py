@@ -84,7 +84,5 @@ class XDFM(object):
             x_input = tf.concat([lr_out,deep_out,xdfm_out],axis=1)
             # x_input = deep_out
             y_out = tf.layers.dense(x_input,1)
-            prob = tf.sigmoid(y_out)
-            loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) + tf.losses.get_regularization_loss()
 
-        return {"prob":prob,"loss":loss}
+        return y_out

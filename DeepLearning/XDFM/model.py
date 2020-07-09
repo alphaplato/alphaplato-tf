@@ -30,11 +30,10 @@ class Model(object):
         optimizer = params['optimizer'] 
         learning_rate = params['learning_rate']
 
-        output = self.md.build_logits(features,labels,params,mode)
-
-        prob = output["prob"]
+        y_out = self.md.build_logits(features,params,mode)
+        prob = tf.sigmoid(y_out)
         predictions={"prob": prob}
-    
+
         export_outputs = {tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: tf.estimator.export.PredictOutput(predictions)}   
         if mode == tf.estimator.ModeKeys.PREDICT:
             return tf.estimator.EstimatorSpec(
@@ -46,7 +45,7 @@ class Model(object):
             "auc": tf.metrics.auc(labels, prob)
             }
 
-        loss = output["loss"]
+        loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels)) + tf.losses.get_regularization_loss()
         if mode == tf.estimator.ModeKeys.EVAL:
             return tf.estimator.EstimatorSpec(
                 mode=mode,
