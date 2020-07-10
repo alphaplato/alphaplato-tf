@@ -1,8 +1,7 @@
 # alphaplato
 
 ## 1、[DeepLearning](https://github.com/alphaplato/alphaplato/tree/master/DeepLearning)
-   这部分是在推荐算法中的总结，面向的是大规模分布式算法，在完成网络结构时采用了tensorflow的feature_column函数以适配分布式特征处理的情境。
-   在使用深度网络其中需要注意的一点是数据的归一化，因为不同数值特征通常不在一个量级，比如CTR特征和counter计数特征，直接结果是网络不稳定甚至不收敛。
+   这部分是在推荐算法中的总结，面向的是大规模分布式算法，在完成网络结构时采用了tensorflow的feature_column函数以适配分布式特征处理的情境。在设计时，将网络及pipeline在代码层面进行了结构化处理，以方便工程开发效率；技巧上，包括序列化网络、随机负采样等。
    
 * DeepFM
 * DCN
