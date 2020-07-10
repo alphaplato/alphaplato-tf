@@ -10,6 +10,7 @@
 * DIN
 * DIEN
 * DeepMatch
+* TFServing
 
 ## 2、[SentimentAnalysis](https://github.com/alphaplato/alphaplato/tree/master/SemanticAnalysis)
   这部分是在语义处理中的总结，比如曾经做过多模态的语义召回即和该目录下的做法雷同，主要采用keras处理。这里包含一个很关键的点，语义处理相对工业化的推荐算法从空间上相对来说是最简单的，也就是说没有大规模的（稀疏）特征，这就意味着训练集规模极小，单机就可以搞定，这也是本项目大部分算法采用keras的原因，非常适合单机条件下处理文本数据集的算法任务。
