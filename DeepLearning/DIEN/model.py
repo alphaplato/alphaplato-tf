@@ -1,6 +1,6 @@
 #!/bin/python3
 #coding:utf-8
-#Copyright 2020 Alphaplato. All Rights Reserved.
+#Copyright 2019 Alphaplato. All Rights Reserved.
 #Desc:structed model
 #=======================================================
 import tensorflow as tf
@@ -19,40 +19,36 @@ class Model(object):
         label = features.pop('label')
         return features,label
 
-    #以下两种处理方式对于单数值特征列处理效果一样
-    # fea_dict[fea['feature_name']] =  tf.FixedLenFeature(shape=[1],dtype=tf.string)
-    # fea_dict[fea['feature_name']] = tf.VarLenFeature(tf.string)
-
-    def input_fn(self,data_path,mode=tf.estimator.ModeKeys.TRAIN,batch_size=1,num_epochs=1):
+    def input_fn(self,data_path,batch_size=1,num_epochs=1):
         num_threads = multiprocessing.cpu_count() if MULTI_THREADING else 1
         dataset = tf.data.TFRecordDataset(data_path,num_parallel_reads=num_threads,compression_type='GZIP')
         dataset = dataset.map(self._parser).repeat(num_epochs).batch(batch_size)
         features,label = dataset.make_one_shot_iterator().get_next()
         return features,label
 
-    def model_fn(self,features,labels,mode,params):
+    def model_fn(self,features,labels,mode,params): 
         optimizer = params['optimizer'] 
         learning_rate = params['learning_rate']
 
-        output = self.md.build_logits(features,labels,params,mode)
-        prob = output["prob"]
+        y_out = self.md.build_logits(features,params,mode)
+        prob = tf.sigmoid(y_out)
         predictions={"prob": prob}
 
-        export_outputs = {
-            tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: tf.estimator.export.PredictOutput(predictions)
-            }
-        
+        export_outputs = {tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY: tf.estimator.export.PredictOutput(predictions)}   
         if mode == tf.estimator.ModeKeys.PREDICT:
             return tf.estimator.EstimatorSpec(
                 mode=mode,
                 predictions=predictions,
-                export_outputs=export_outputs)
+                export_outputs=export_outputs)     
 
         eval_metric_ops = {
             "auc": tf.metrics.auc(labels, prob)
             }
 
-        loss = output["loss"]
+        main_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_out, labels=labels))
+        auxi_loss = self.md.build_auxi_loss(features,params,mode)
+        loss = main_loss + auxi_loss + tf.losses.get_regularization_loss()
+
         if mode == tf.estimator.ModeKeys.EVAL:
             return tf.estimator.EstimatorSpec(
                 mode=mode,
