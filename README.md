@@ -1,7 +1,7 @@
 # alphaplato
 
 ## 1、[DeepLearning](https://github.com/alphaplato/alphaplato/tree/master/DeepLearning)
-   这部分是在推荐算法中的总结，面向的是大规模分布式算法，在完成网络结构时采用了tensorflow的feature_column函数以适配分布式特征处理的情境。开发上，将网络及pipeline在代码层面进行了结构化处理，以方便工程开发效率；技巧上，包括序列化网络、随机负采样等。同时，包含了工业条件下，tensorflow serving部署的方案及demo。
+   这部分是在推荐算法中的总结，面向的是生产环境下的算法开发，在完成网络结构时采用了tensorflow的feature_column函数以适配分布式特征处理的情境。开发上，将网络及pipeline在代码层面进行了结构化处理，以提高工程开发效率；技巧上，包含序列化网络、随机负采样等设计。另外，也给出了在工业条件下，tensorflow serving部署的方案及demo。
    
 * DeepFM
 * DCN
