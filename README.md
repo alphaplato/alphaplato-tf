@@ -14,7 +14,7 @@
 
 ## 2、[SentimentAnalysis](https://github.com/alphaplato/alphaplato/tree/master/SemanticAnalysis)
   这部分是在语义处理中的总结，比如曾经做过多模态的语义召回、情感分析等。这里包含一个很关键的点，语义处理相对工业化的推荐算法从空间上相对来说是最简单的，也就是说没有大规模的（稀疏）特征，通常训练集规模极小，单机就可以搞定。由于该项目项目大部分算法是本人早起工作积累，主要使用的是keras，其非常适合单机条件下处理文本数据集的算法任务。
-  语义分析个人经验是1）要有明确算法的语义目的，2）word2vec预训练，3）好的分词工具。
+  语义分析个人经验是1）最好有明确算法的语义目的，2）word2vec预训练，3）好的分词工具。
   
 * Semantic_match
 * Sentiment_analysis
