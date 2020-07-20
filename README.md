@@ -9,7 +9,7 @@
 * XDeepFM
 * DIN
 * DIEN
-* ESSM
+* ESMM
 * DeepMatch
 * TFServing
 
