@@ -25,6 +25,7 @@ tf.app.flags.DEFINE_integer("num_threads", 16, "Number of threads")
 tf.app.flags.DEFINE_integer("num_epochs", 20, "Number of epochs")
 tf.app.flags.DEFINE_integer("batch_size", 64, "Number of batch size")
 tf.app.flags.DEFINE_integer("log_steps", 1000, "save summary every steps")
+tf.app.flags.DEFINE_integer("save_checkpoints_secs", 10, "save checkpoints every seconds)
 tf.app.flags.DEFINE_float("learning_rate", 0.0005, "learning rate")
 tf.app.flags.DEFINE_float("l2_reg", 0.01, "L2 regularization")
 tf.app.flags.DEFINE_string("optimizer", 'Adam', "optimizer type {Adam, Adagrad, GD, Momentum}")
@@ -100,37 +101,60 @@ def main(_):
         "dropout": list(map(float,FLAGS.dropout.split(','))),
         "optimizer":FLAGS.optimizer
     }   
-
-    if FLAGS.clear_existing_model:
-        try:
-            shutil.rmtree('./model')
-        except Exception as e:
-            print(e, "at clear_existing_model")
-        else:
-            print("existing model cleaned at %s" % FLAGS.model_dir)  
-
+ 
     tr_files = "./data/train.tfrecords"
     va_files ="./data/test.tfrecords"
-
 
     fea_json = feature_json('./feature_generator.json')
     fg = FeatureGenerator(fea_json)
     md = DeepFM(fg)
     model = Model(fg,md)
 
-    config = tf.estimator.RunConfig().replace(session_config = tf.ConfigProto(device_count={'GPU':0, 'CPU':FLAGS.num_threads}),
-            log_step_count_steps=FLAGS.log_steps, save_summary_steps=FLAGS.log_steps)
-    Estimator = tf.estimator.Estimator(model_fn=model.model_fn, model_dir=FLAGS.model_dir, params=model_params, config=config)
+    config = tf.estimator.RunConfig().replace(
+        session_config = tf.ConfigProto(device_count={'GPU':0, 'CPU':FLAGS.num_threads}),
+        log_step_count_steps=FLAGS.log_steps, 
+        save_summary_steps=FLAGS.log_steps,
+        save_checkpoints_secs=FLAGS.save_checkpoints_secs)
+    Estimator = tf.estimator.Estimator(
+        model_fn=model.model_fn, 
+        model_dir=FLAGS.model_dir, 
+        params=model_params, 
+        config=config)
 
     if FLAGS.task_type == 'train':
-        train_spec = tf.estimator.TrainSpec(input_fn=lambda: model.input_fn(tr_files, num_epochs=FLAGS.num_epochs, batch_size=FLAGS.batch_size))
-        eval_spec = tf.estimator.EvalSpec(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), steps=None, start_delay_secs=1000, throttle_secs=1200)
-        tf.estimator.train_and_evaluate(Estimator, train_spec, eval_spec)
+        train_spec = tf.estimator.TrainSpec(
+            input_fn=lambda: model.input_fn(
+                tr_files, 
+                num_epochs=FLAGS.num_epochs, 
+                batch_size=FLAGS.batch_size))
+        eval_spec = tf.estimator.EvalSpec(
+            input_fn=lambda: model.input_fn(
+                va_files, num_epochs=1, 
+                batch_size=FLAGS.batch_size), 
+            steps=None, 
+            start_delay_secs=10, 
+            throttle_secs=FLAGS.save_checkpoints_secs)
+        tf.estimator.train_and_evaluate(
+            Estimator, 
+            train_spec, 
+            eval_spec)
     elif FLAGS.task_type == 'eval':
-        Estimator.evaluate(input_fn=lambda: model.input_fn(tr_files, num_epochs=1, batch_size=FLAGS.batch_size))
-        Estimator.evaluate(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size))
+        evals = Estimator.evaluate(
+            input_fn=lambda: model.input_fn(
+                tr_files, num_epochs=1, 
+                batch_size=FLAGS.batch_size))
+        evals = Estimator.evaluate(
+            input_fn=lambda: model.input_fn(
+                va_files, 
+                num_epochs=1, 
+                batch_size=FLAGS.batch_size))
     elif FLAGS.task_type == 'infer':
-        preds = Estimator.predict(input_fn=lambda: model.input_fn(va_files, num_epochs=1, batch_size=FLAGS.batch_size), predict_keys="prob")
+        preds = Estimator.predict(
+            input_fn=lambda: model.input_fn(
+                va_files, 
+                num_epochs=1, 
+                batch_size=FLAGS.batch_size),
+            predict_keys="prob")
     elif FLAGS.task_type == 'export':
         ##单机使用保存
         # print(fg.feature_spec)
@@ -138,9 +162,9 @@ def main(_):
         serving_input_receiver_fn = (
             tf.estimator.export.build_raw_serving_input_receiver_fn(fg.feature_placeholders)
         )
-
-        Estimator.export_saved_model(FLAGS.servable_model_dir, serving_input_receiver_fn)
-
+        Estimator.export_saved_model(
+            FLAGS.servable_model_dir, 
+            serving_input_receiver_fn)
 
 if __name__=='__main__':
     tf.logging.set_verbosity(tf.logging.INFO)
