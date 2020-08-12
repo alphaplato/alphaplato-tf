@@ -82,6 +82,13 @@
             "value_type":"String",
             "hash_size":100,
             "embedding":16
+        },
+        {
+            "feature_name":"occupation-race",
+            "feature_type":"cross",
+            "cross_features":["occupation","race"],
+            "hash_size":200,
+            "embedding":16
         }
     ],
     "label":[
