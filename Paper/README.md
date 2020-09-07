@@ -13,3 +13,8 @@
 ## 3、工具
 
 * [XGBoost](https://xgboost.readthedocs.io/en/latest/index.html)
+
+## 4、paper
+* [一种消除CTR预估中位置偏置的框架](https://www.researchgate.net/profile/Huifeng_Guo/publication/335771749_PAL_a_position-bias_aware_learning_framework_for_CTR_prediction_in_live_recommender_systems/links/5e8e75ed4585150839cac5f1/PAL-a-position-bias-aware-learning-framework-for-CTR-prediction-in-live-recommender-systems.pdf)
+
+[paper idea](https://github.com/alphaplato/alphaplato/blob/master/image/Paper/rec-huawei-1.png)
