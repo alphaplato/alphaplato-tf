@@ -10,6 +10,8 @@
 
 * [机器学习如何选择特征](https://zhuanlan.zhihu.com/p/38522541)
 
+* [LR为什么使用sigmoid函数作为激活函数？](http://0x100.club/wiki_ml_dl/logistic-regression.html)
+
 ## 3、工具
 
 * [XGBoost](https://xgboost.readthedocs.io/en/latest/index.html)
