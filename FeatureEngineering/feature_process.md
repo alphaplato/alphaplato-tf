@@ -225,7 +225,7 @@ b.平均精确率减少 Mean decrease accuracy
 为什么要对特征值进行平滑处理
 广告点击率CTR是度量一个用户对于一个广告的行为的最好的度量方法，广告点击率可以定义为：对于一个广告的被点击(click)的次数于被展示(impression)的次数的比值。
 
-CTR=#click#impression
+CTR=click/impression
 
 在计算CTR时，由于数据的稀疏性，利用上述的计算方法得到的CTR通常具有较大的偏差，这样的偏差主要表现在如下的两种情况：
 
