@@ -31,5 +31,3 @@ e-mail：plato.sg.lee@gmail.com
   算法的工程架构反思与总结。这里会从算法角度，反演整体的架构，对常见场景下的召回、排序环节的工程结构化与设计思路做一些总结。这部分主要包含两个方面的经验：
   * 合理的算法工程架构。
   * 可适配的高效算法服务组件。
-
-## 5、[ReinforcementLearning](https://github.com/alphaplato/alphaplato/tree/master/ReinforcementLearning)
